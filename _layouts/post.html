@@ -74,7 +74,7 @@ script_includes:
       {% if page.image %}
         {% capture src_raw %}{{ page.image.path | default: page.image }}"{% endcapture %}
         {%- capture src_full -%}
-          {% include media-url.html src=src_raw subpath=page.media_subpath %}
+          {% include media-url.html src=src_raw subpath=page.media_subpath absolute="true" %}
         {%- endcapture -%}
         {% capture src %}src="{{ src_full }}"{% endcapture %}
         <!-- src_raw={{ src_raw }} src_full={{ src_full }} -->

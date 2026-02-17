@@ -7,25 +7,19 @@ Enclosing container class controls layout:
 - .post-index.view-grid
 {%- endcomment -%}
 
-<!-- post.image {{ post.image }} -->
 {%- if post.image -%}
 
     {% assign src = post.image.path | default: post.image %}
-    {% if post.media_subpath %}
-        {%- assign p3 = src | slice: 0, 3 -%}
-        {%- assign is_wc = false -%}
-        {%- if p3 == "wc:" or src contains "commons.wikimedia.org" -%}
-            {%- assign is_wc = true -%}
-        {%- endif -%}
-        {% unless src contains '://' or is_wc %}
-            {% assign src = post.media_subpath
-                | append: '/'
-                | append: src
-                | replace: '///', '/'
-                | replace: '//', '/'
-            %}
-        {% endunless %}
-    {% endif %}
+    
+    {% capture src_raw %}{{ post.image.path | default: post.image }}"{% endcapture %}
+    {%- capture src_full -%}
+        {% include media-url.html src=src_raw subpath=post.media_subpath absolute="true" %}
+    {%- endcapture -%}
+    {%- assign src = src_full -%}
+    <!-- src_raw={{src_raw}} src_full={{src_full}} src={{src}}-->
+
+    {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
+    {% capture alt %}alt="{{ page.image.alt | xml_escape | default: "Preview Image" }}"{% endcapture %}
 
     {%- if post.image.lqip -%}
         {% assign lqip = post.image.lqip %}
