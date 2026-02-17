@@ -72,7 +72,12 @@ script_includes:
       {% endif %}
 
       {% if page.image %}
-        {% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
+        {% capture src_raw %}{{ page.image.path | default: page.image }}"{% endcapture %}
+        {%- capture src_full -%}
+          {% include media-url.html src=src_raw subpath=page.media_subpath %}
+        {%- endcapture -%}
+        {% capture src %}src="{{ src_full }}"{% endcapture %}
+        <!-- src_raw={{ src_raw }} src_full={{ src_full }} -->
         {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
         {% capture alt %}alt="{{ page.image.alt | xml_escape | default: "Preview Image" }}"{% endcapture %}
 
