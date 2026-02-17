@@ -82,9 +82,6 @@ script_includes:
         {%- endcomment -%}
         
         {% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
-        
-        <div>src_raw={{ src_raw }} src_full={{ src_full }} {{src}}</div>
-        <!-- src_raw={{ src_raw }} src_full={{ src_full }} {{src}} -->
 
         {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
         {% capture alt %}alt="{{ page.image.alt | xml_escape | default: "Preview Image" }}"{% endcapture %}

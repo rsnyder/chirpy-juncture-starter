@@ -9,14 +9,16 @@ Enclosing container class controls layout:
 
 {%- if post.image -%}
 
-    {% assign src = post.image.path | default: post.image %}
+    {% comment %}
+        {% assign src = post.image.path | default: post.image %}
+    {% endcomment %}
     
-    {% capture src_raw %}{{ post.image.path | default: post.image }}"{% endcapture %}
-    {%- capture src_full -%}
-        {% include media-url.html src=src_raw subpath=post.media_subpath absolute="true" %}
-    {%- endcapture -%}
-    {%- assign src = src_full -%}
-    <!-- src_raw={{src_raw}} src_full={{src_full}} src={{src}}-->
+        {% capture src_raw %}{{ post.image.path | default: post.image }}"{% endcapture %}
+        {%- capture src_full -%}
+            {% include media-url.html src=src_raw subpath=post.media_subpath absolute="true" %}
+        {%- endcapture -%}
+        {%- assign src = src_full -%}
+        <!-- src_raw={{src_raw}} src_full={{src_full}} src={{src}}-->
 
     {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
     {% capture alt %}alt="{{ page.image.alt | xml_escape | default: "Preview Image" }}"{% endcapture %}
@@ -41,8 +43,8 @@ Enclosing container class controls layout:
 {%- assign alt = post.image.alt | xml_escape | default: 'Preview Image' -%}
 
 <article class="post-index-item card-wrapper card">
-    <div>src_raw={{ src_raw }} src_full={{ src_full }} src={{src}}</div>
     <a href="{{ post.url | relative_url }}" class="post-index-link">
+        <!-- src={{src}} -->
         <div class="post-index-media">
             <img src="{{ src }}" alt="{{ alt }}" {{ lqip_attr }}>
         </div>
