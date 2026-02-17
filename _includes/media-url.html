@@ -100,7 +100,7 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/{{ _md5 | slice: 0, 1 }}/{{
       {%- if site.cdn -%}
         {%- if is_cloudinary_cdn == true -%}
           {%- if is_dev == false -%}
-            {%- assign url = site.cdn | append: '/' | append: site.url | append: url -%}
+            {%- assign url = site.cdn | append: '/' | append: site.url | append: site.baseurl | append: url -%}
           {%- endif -%}
         {%- else -%}
           {%- assign url = site.cdn | append: '/' | append: url -%}
