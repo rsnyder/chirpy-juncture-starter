@@ -26,8 +26,6 @@
     {%- assign is_dev = true -%}
   {%- endif -%}
 
-  {%- assign is_dev = false -%}
-
   {%- assign is_cloudinary_cdn = false -%}
   {%- if site.cdn contains 'res.cloudinary.com' -%}
     {%- assign is_cloudinary_cdn = true -%}

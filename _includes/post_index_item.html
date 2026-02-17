@@ -15,7 +15,7 @@ Enclosing container class controls layout:
     
         {% capture src_raw %}{{ post.image.path | default: post.image }}"{% endcapture %}
         {%- capture src_full -%}
-            {% include media-url.html src=src_raw subpath=post.media_subpath %}
+            {% include media-url.html src=src_raw subpath=post.media_subpath absolute="true" %}
         {%- endcapture -%}
         {%- assign src = src_full -%}
         <!-- src_raw={{src_raw}} src_full={{src_full}} src={{src}}-->
