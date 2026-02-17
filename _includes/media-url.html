@@ -15,9 +15,34 @@
 {%- if url -%}
   {%- assign url = url | strip -%}
 
-  {%- comment -%} If src already starts with http, return it unchanged {%- endcomment -%}
   {%- assign p4 = url | slice: 0, 4 -%}
-  {%- unless p4 == "http" -%}
+  {%- assign is_abs = false -%}
+  {%- if p4 == "http" -%}
+    {%- assign is_abs = true -%}
+  {%- endif -%}
+
+  {%- assign is_dev = false -%}
+  {%- if jekyll.environment == "development" -%}
+    {%- assign is_dev = true -%}
+  {%- endif -%}
+
+  {%- assign is_cloudinary_cdn = false -%}
+  {%- if site.cdn contains 'res.cloudinary.com' -%}
+    {%- assign is_cloudinary_cdn = true -%}
+  {%- endif -%}
+
+  {%- comment -%}
+    If an absolute URL is provided:
+    - leave it unchanged EXCEPT:
+    - if Cloudinary CDN is configured and we're not in dev, wrap it with Cloudinary fetch.
+  {%- endcomment -%}
+  {%- if is_abs -%}
+
+    {%- if site.cdn and is_cloudinary_cdn == true and is_dev == false -%}
+      {%- assign url = site.cdn | append: '/' | append: url -%}
+    {%- endif -%}
+
+  {%- else -%}
 
     {%- assign p3 = url | slice: 0, 3 -%}
     {%- assign is_wc = false -%}
@@ -58,16 +83,6 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/{{ _md5 | slice: 0, 1 }}/{{
       {%- comment -%} Add media resources subpath prefix {%- endcomment -%}
       {% assign url = include.subpath | default: '' | append: '/' | append: url %}
 
-      {%- assign is_dev = false -%}
-      {%- if jekyll.environment == "development" -%}
-        {%- assign is_dev = true -%}
-      {%- endif -%}
-
-      {%- assign is_cloudinary_cdn = false -%}
-      {%- if site.cdn contains 'res.cloudinary.com' -%}
-        {%- assign is_cloudinary_cdn = true -%}
-      {%- endif -%}
-
       {% assign url = url | replace: '///', '/' | replace: '//', '/' | replace: ':/', '://' %}
 
       {% unless url contains '://' %}
@@ -94,7 +109,7 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/{{ _md5 | slice: 0, 1 }}/{{
 
     {%- endif -%}
 
-  {%- endunless -%}
+  {%- endif -%}
 {%- endif -%}
 
 {{- url -}}
