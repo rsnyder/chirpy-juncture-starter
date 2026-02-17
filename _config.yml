@@ -95,7 +95,7 @@ theme_mode: # [light | dark]
 # will be added to all media resources (site avatar, posts' images, audio and video files) paths starting with '/'
 #
 # e.g. 'https://cdn.com'
-cdn: https://res.cloudinary.com/dmceci9t1/image/fetch/w_1200,c_limit
+cdn: # https://res.cloudinary.com/dmceci9t1/image/fetch/w_1200,c_limit
 
 # the avatar on sidebar, support local or CORS resources
 avatar: /assets/img/avatar.jpg

@@ -9,16 +9,26 @@ Enclosing container class controls layout:
 
 {%- if post.image -%}
 
-    {% comment %}
         {% assign src = post.image.path | default: post.image %}
-    {% endcomment %}
-    
+
+        {%- assign p4 = src | slice: 0, 4 -%}
+        {%- assign is_abs = false -%}
+        {%- if p4 == "http" -%}
+            {%- assign is_abs = true -%}
+        {%- endif -%}
+
+        {% if post.media_subpath and is_abs == false %}
+            {% assign src = post.media_subpath | append: '/' | append: src %}
+        {% endif %}
+
+    {% comment %}
         {% capture src_raw %}{{ post.image.path | default: post.image }}"{% endcapture %}
         {%- capture src_full -%}
-            {% include media-url.html src=src_raw subpath=post.media_subpath absolute="true" %}
+            {% include media-url.html src=src_raw subpath=post.media_subpath %}
         {%- endcapture -%}
         {%- assign src = src_full -%}
         <!-- src_raw={{src_raw}} src_full={{src_full}} src={{src}}-->
+    {% endcomment %}
 
     {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
     {% capture alt %}alt="{{ page.image.alt | xml_escape | default: "Preview Image" }}"{% endcapture %}
