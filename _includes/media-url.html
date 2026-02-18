@@ -85,7 +85,7 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/{{ _md5 | slice: 0, 1 }}/{{
     {% endunless %}
 
     {% if is_dev == false and is_cloudinary_cdn == true %}
-      {%- assign url = site.cdn | append: '/' | append: site.url | append: url -%}
+      {%- assign url = site.cdn | append: '/' | append: url -%}
     {% endif %}
   
   {%- endif -%}
