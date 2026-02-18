@@ -20,6 +20,16 @@
     {%- assign is_wc = true -%}
   {%- endif -%}
 
+  {%- assign is_dev = false -%}
+  {%- if jekyll.environment == "development" -%}
+    {%- assign is_dev = true -%}
+  {%- endif -%}
+    
+  {%- assign is_cloudinary_cdn = false -%}
+    {%- if site.cdn contains 'res.cloudinary.com' -%}
+    {%- assign is_cloudinary_cdn = true -%}
+  {%- endif -%}
+
   {%- if is_wc -%}
     {%- assign mw_width = include.width | default: 1200 -%}
 
@@ -48,12 +58,13 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/{{ _md5 | slice: 0, 1 }}/{{
 
     {%- assign url = mw_url | strip -%}
   {% else %}
+    
     {% unless url contains ':' %}
       {%- comment -%} Add media resources subpath prefix {%- endcomment -%}
       {% assign url = include.subpath | default: '' | append: '/' | append: url %}
 
       {%- comment -%} Prepend CND URL {%- endcomment -%}
-      {% if site.cdn %}
+      {% if site.cdn and is_cloudinary_cdn == false %}
         {% assign url = site.cdn | append: '/' | append: url %}
       {% endif %}
 
@@ -63,10 +74,20 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/{{ _md5 | slice: 0, 1 }}/{{
         {% if include.absolute %}
           {% assign url = site.url | append: site.baseurl | append: url %}
         {% else %}
-          {% assign url = site.baseurl | append: url %}
-        {% endif %}
+          {% if is_dev == false and is_cloudinary_cdn == true %}
+            {% assign url = site.url | append: site.baseurl | append: url %}
+          {% else %}
+            {% assign url = site.baseurl | append: url %}
+          {% endif %}
+        {% endif %}        
       {% endunless %}
+    
     {% endunless %}
+
+    {% if is_dev == false and is_cloudinary_cdn == true %}
+      {%- assign url = site.cdn | append: '/' | append: site.url | append: url -%}
+    {% endif %}
+  
   {%- endif -%}
 
 {%- endif -%}
