@@ -1,16 +1,16 @@
 ---
-title: Monument Valley
+title: Monument Valley WC
 description: Interactive visual essay on Monument Valley.
 authors:
 - Ron Snyder
-date: 2025-01-10
+date: 2025-01-11
 image:
-    path: Monument_Valley.jpg
+    path: wc:Monument_Valley,_Utah,_USA.jpg
     alt: Monument Valley
 categories: [ examples ]
 tags: [ Monument Valley ]
 media_subpath: /assets/posts/monument-valley
-permalink: /monument-valley/
+permalink: /monument-valley-wc/
 toc: false
 published: true
 pin: true
