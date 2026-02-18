@@ -44,15 +44,6 @@ Enclosing container class controls layout:
       {%- assign src = site.cdn | append: '/' | append: src -%}
     {% endif %}
 
-    {% comment %}
-        {% capture src_raw %}{{ post.image.path | default: post.image }}"{% endcapture %}
-        {%- capture src_full -%}
-            {% include media-url.html src=src_raw subpath=post.media_subpath %}
-        {%- endcapture -%}
-        {%- assign src = src_full -%}
-        <!-- src_raw={{src_raw}} src_full={{src_full}} src={{src}}-->
-    {% endcomment %}
-
     {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
     {% capture alt %}alt="{{ page.image.alt | xml_escape | default: "Preview Image" }}"{% endcapture %}
 
