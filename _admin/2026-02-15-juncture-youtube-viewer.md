@@ -3,7 +3,7 @@ title: "Juncture: YouTube Viewer"
 description: How to use the Juncture YouTube viewer in your Markdown posts.
 permalink: /admin/juncture-youtube-viewer
 date: 2026-02-15
-order: 12
+order: 13
 juncture:
     mode: 2col
     toolbar: false

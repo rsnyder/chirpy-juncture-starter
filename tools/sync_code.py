@@ -34,6 +34,8 @@ FILES_TO_SYNC = [
     "_admin/2026-02-15-juncture-image-viewer.md",
     "_admin/2026-02-15-juncture-map-viewer.md",
     "_admin/2026-02-15-juncture-youtube-viewer.md",
+    "_admin/2026-02-15-juncture-authoring-workflow.md",
+    "_admin/2026-02-15-juncture-add-preview-bookmarklet.md",
     "_includes/embed/iframe.html",
     "_includes/embed/image-compare.html",
     "_includes/embed/image.html",
