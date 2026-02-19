@@ -74,7 +74,6 @@ the park on a 17-mile (27 km) dirt road. Parts of Monument Valley, such as Myste
 only by guided tour.
 
 {% include embed/youtube.html vid="yg0As_HOvJk" id="video1" %}
-{% include embed/youtube.html vid="GGyiZ7SE3V4" id="video2" %}
 
 Monument Valley has been featured in many forms of media since the 1930s. Famed director John Ford used the location for
 a number of his Westerns. Film critic Keith Phipps wrote that "its five square miles [13 km2] have defined what decades
@@ -83,11 +82,6 @@ of moviegoers think of when they imagine the American West".[^3]
 ---
 
 
-[^1]: Scheffel, Richard L.; Wernet, Susan J., eds. (1980). Natural Wonders of the World. Reader's Digest. p. 255. ISBN
-978-0895770875.
-[^2]: King, Farina (2018). "Náhookọs (North): New Hioes for Diné Students." The Earth Memory Compass: Diné Landscapes
-and Education in the Twentieth Century. University Press of Kansas. pp. 142–74.
-[doi:10.2307/j.ctv6mtdsj](https://doi.org/10.2307%2Fj.ctv6mtdsj). S2CID 135010884.
-[^3]: Phipps, Keith (November 17, 2009). ["The Easy Rider Road
-Trip"](https://slate.com/culture/2009/11/monument-valley-where-peter-and-henry-fonda-s-careers-intersected.html). Slate.
-Retrieved December 16, 2012.
+[^1]: Scheffel, Richard L.; Wernet, Susan J., eds. (1980). Natural Wonders of the World. Reader's Digest. p. 255. ISBN 978-0895770875.
+[^2]: King, Farina (2018). "Náhookọs (North): New Hioes for Diné Students." The Earth Memory Compass: Diné Landscapes and Education in the Twentieth Century. University Press of Kansas. pp. 142–74. [doi:10.2307/j.ctv6mtdsj](https://doi.org/10.2307%2Fj.ctv6mtdsj). S2CID 135010884.
+[^3]: Phipps, Keith (November 17, 2009). ["The Easy Rider Road Trip"](https://slate.com/culture/2009/11/monument-valley-where-peter-and-henry-fonda-s-careers-intersected.html). Slate. Retrieved December 16, 2012.
