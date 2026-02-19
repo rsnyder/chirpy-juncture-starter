@@ -131,7 +131,7 @@ order: 12
 
 <script>
 (function() {
-  const previewUrl = '{{ site.url }}{{ site.baseurl }}/preview.html';
+  const previewUrl = '{{ site.url }}{{ site.baseurl }}/preview';
 
   const code = `(function(){
   var m=location.href.match(/github\\.com\\/([^/]+)\\/([^/]+)\\/blob\\/([^/]+)\\/(.+\\.md)/);
