@@ -16,7 +16,7 @@ published: true
 pin: true
 juncture:
     toolbar: true
-    mode: 2col # default layout style: flat or 2col
+    mode: flat # default layout style: flat or 2col
     mode_toggle: true # Enable the toggle button to switch between 2col and flat styles
     auto_float: true # auto float embeds
     group_embeds: true # group adjacent embeds as tabs or carousels

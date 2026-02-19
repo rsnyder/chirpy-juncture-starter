@@ -282,6 +282,7 @@ script_includes:
     let wikidataInfoPopups = ('{{ page.juncture.wikidata_info_popups }}' || '{{ site.juncture.wikidata_info_popups }}' || 'true').toLowerCase() === 'true';
 
     console.log(`Juncture: isMobile:${isMobile} mode:${mode} modeToggle:${mode_toggle} autoFloat:${doAutoFloat} groupEmbeds:${groupEmbeds} wikidataInfoPopups:${wikidataInfoPopups}`);
+    document.getElementById('main-wrapper').classList.add(mode === 'flat' ? 'col1' : 'col2');
 
     if (wikidataInfoPopups) makeEntityPopups();
     if (groupEmbeds) wrapAdjacentEmbedsAsTabs();
