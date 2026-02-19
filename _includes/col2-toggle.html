@@ -65,7 +65,7 @@
         async function setViewMode(mode) {
             const effectiveMode = isMobile ? 'col1' : mode;
             const toCol2 = effectiveMode === 'col2';
-            console.log(setViewMode: mode=${mode} effectiveMode=${effectiveMode}`);
+            console.log(`setViewMode: mode=${mode} effectiveMode=${effectiveMode}`);
 
             mainWrapper.classList.toggle('col2', toCol2);
             mainWrapper.classList.toggle('col1', !toCol2);
