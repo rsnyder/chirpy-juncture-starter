@@ -387,6 +387,60 @@ function buildLiquidEngine(o, r, ref, context) {
   const baseurl = context.site.baseurl || '';
   const siteUrl = (context.site.url || location.origin).replace(/\/$/, '');
 
+  // ── md5 filter (needed for Wikimedia Commons URL construction) ──────────
+  // LiquidJS doesn't include md5; we implement it using pure JS (no crypto API
+  // needed — a small self-contained implementation is sufficient here).
+  function md5(str) {
+    // Based on the public domain MD5 implementation by Joseph Myers
+    function safeAdd(x, y) { const lsw=(x&0xffff)+(y&0xffff); return (((x>>16)+(y>>16)+(lsw>>16))<<16)|(lsw&0xffff); }
+    function bitRotateLeft(num, cnt) { return (num<<cnt)|(num>>>(32-cnt)); }
+    function md5cmn(q,a,b,x,s,t){return safeAdd(bitRotateLeft(safeAdd(safeAdd(a,q),safeAdd(x,t)),s),b);}
+    function md5ff(a,b,c,d,x,s,t){return md5cmn((b&c)|((~b)&d),a,b,x,s,t);}
+    function md5gg(a,b,c,d,x,s,t){return md5cmn((b&d)|(c&(~d)),a,b,x,s,t);}
+    function md5hh(a,b,c,d,x,s,t){return md5cmn(b^c^d,a,b,x,s,t);}
+    function md5ii(a,b,c,d,x,s,t){return md5cmn(c^(b|(~d)),a,b,x,s,t);}
+    function md5blks(s){
+      const blks=[];const l=s.length;
+      for(let i=0;i<l+64;i+=64){blks[i>>5]=0;}
+      for(let i=0;i<l;i++){blks[i>>5]|=(s.charCodeAt(i)&0xff)<<((i%4)*8);}
+      blks[l>>5]|=0x80<<((l%4)*8);
+      blks[(((l+64)>>>9)<<4)+14]=l*8;
+      return blks;
+    }
+    function rhex(n){let s='',j=0;for(;j<4;j++)s+=('0'+((n>>>(j*8+4))&0x0f).toString(16))+('0'+((n>>>(j*8))&0x0f).toString(16));return s;}
+    const x=md5blks(str);
+    let a=1732584193,b=-271733879,c=-1732584194,d=271733878;
+    for(let i=0;i<x.length;i+=16){
+      const [oa,ob,oc,od]=[a,b,c,d];
+      a=md5ff(a,b,c,d,x[i],7,-680876936);d=md5ff(d,a,b,c,x[i+1],12,-389564586);c=md5ff(c,d,a,b,x[i+2],17,606105819);b=md5ff(b,c,d,a,x[i+3],22,-1044525330);
+      a=md5ff(a,b,c,d,x[i+4],7,-176418897);d=md5ff(d,a,b,c,x[i+5],12,1200080426);c=md5ff(c,d,a,b,x[i+6],17,-1473231341);b=md5ff(b,c,d,a,x[i+7],22,-45705983);
+      a=md5ff(a,b,c,d,x[i+8],7,1770035416);d=md5ff(d,a,b,c,x[i+9],12,-1958414417);c=md5ff(c,d,a,b,x[i+10],17,-42063);b=md5ff(b,c,d,a,x[i+11],22,-1990404162);
+      a=md5ff(a,b,c,d,x[i+12],7,1804603682);d=md5ff(d,a,b,c,x[i+13],12,-40341101);c=md5ff(c,d,a,b,x[i+14],17,-1502002290);b=md5ff(b,c,d,a,x[i+15],22,1236535329);
+      a=md5gg(a,b,c,d,x[i+1],5,-165796510);d=md5gg(d,a,b,c,x[i+6],9,-1069501632);c=md5gg(c,d,a,b,x[i+11],14,643717713);b=md5gg(b,c,d,a,x[i],20,-373897302);
+      a=md5gg(a,b,c,d,x[i+5],5,-701558691);d=md5gg(d,a,b,c,x[i+10],9,38016083);c=md5gg(c,d,a,b,x[i+15],14,-660478335);b=md5gg(b,c,d,a,x[i+4],20,-405537848);
+      a=md5gg(a,b,c,d,x[i+9],5,568446438);d=md5gg(d,a,b,c,x[i+14],9,-1019803690);c=md5gg(c,d,a,b,x[i+3],14,-187363961);b=md5gg(b,c,d,a,x[i+8],20,1163531501);
+      a=md5gg(a,b,c,d,x[i+13],5,-1444681467);d=md5gg(d,a,b,c,x[i+2],9,-51403784);c=md5gg(c,d,a,b,x[i+7],14,1735328473);b=md5gg(b,c,d,a,x[i+12],20,-1926607734);
+      a=md5hh(a,b,c,d,x[i+5],4,-378558);d=md5hh(d,a,b,c,x[i+8],11,-2022574463);c=md5hh(c,d,a,b,x[i+11],16,1839030562);b=md5hh(b,c,d,a,x[i+14],23,-35309556);
+      a=md5hh(a,b,c,d,x[i+1],4,-1530992060);d=md5hh(d,a,b,c,x[i+4],11,1272893353);c=md5hh(c,d,a,b,x[i+7],16,-155497632);b=md5hh(b,c,d,a,x[i+10],23,-1094730640);
+      a=md5hh(a,b,c,d,x[i+13],4,681279174);d=md5hh(d,a,b,c,x[i],11,-358537222);c=md5hh(c,d,a,b,x[i+3],16,-722521979);b=md5hh(b,c,d,a,x[i+6],23,76029189);
+      a=md5hh(a,b,c,d,x[i+9],4,-640364487);d=md5hh(d,a,b,c,x[i+12],11,-421815835);c=md5hh(c,d,a,b,x[i+15],16,530742520);b=md5hh(b,c,d,a,x[i+2],23,-995338651);
+      a=md5ii(a,b,c,d,x[i],6,-198630844);d=md5ii(d,a,b,c,x[i+7],10,1126891415);c=md5ii(c,d,a,b,x[i+14],15,-1416354905);b=md5ii(b,c,d,a,x[i+5],21,-57434055);
+      a=md5ii(a,b,c,d,x[i+12],6,1700485571);d=md5ii(d,a,b,c,x[i+3],10,-1894986606);c=md5ii(c,d,a,b,x[i+10],15,-1051523);b=md5ii(b,c,d,a,x[i+1],21,-2054922799);
+      a=md5ii(a,b,c,d,x[i+8],6,1873313359);d=md5ii(d,a,b,c,x[i+15],10,-30611744);c=md5ii(c,d,a,b,x[i+6],15,-1560198380);b=md5ii(b,c,d,a,x[i+13],21,1309151649);
+      a=md5ii(a,b,c,d,x[i+4],6,-145523070);d=md5ii(d,a,b,c,x[i+11],10,-1120210379);c=md5ii(c,d,a,b,x[i+2],15,718787259);b=md5ii(b,c,d,a,x[i+9],21,-343485551);
+      a=safeAdd(a,oa);b=safeAdd(b,ob);c=safeAdd(c,oc);d=safeAdd(d,od);
+    }
+    return rhex(a)+rhex(b)+rhex(c)+rhex(d);
+  }
+
+  engine.registerFilter('md5', v => md5(String(v || '')));
+
+  // Also register url_decode (Jekyll filter, not in LiquidJS by default)
+  engine.registerFilter('url_decode', v => {
+    try { return decodeURIComponent(String(v || '').replace(/\+/g, ' ')); }
+    catch { return String(v || ''); }
+  });
+
   engine.registerFilter('relative_url', v => {
     if (!v) return '';
     const s = String(v);
@@ -413,7 +467,26 @@ function buildLiquidEngine(o, r, ref, context) {
   });
 
   engine.registerFilter('xml_escape', v => String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
-  engine.registerFilter('uri_escape', v => encodeURIComponent(String(v || '')));
+  // uri_escape matches Jekyll's CGI.escape: encodes space as + and unsafe chars,
+  // but we apply it only to the VALUE portion when the input looks like an
+  // accumulated query string (contains unencoded = or &).
+  // If input contains '=' or '&' that aren't percent-encoded, it's a qs — skip.
+  // This matches the practical behaviour needed for image.html / media-url.html.
+  engine.registerFilter('uri_escape', v => {
+    const s = String(v || '');
+    // If the string looks like an accumulated query string (has key=value pairs),
+    // only encode the final value segment after the last '='
+    const lastEq = s.lastIndexOf('=');
+    const lastAmp = s.lastIndexOf('&');
+    if (lastEq > 0 && lastEq > lastAmp) {
+      // Has key=value structure — encode only the value after the last =
+      const prefix = s.slice(0, lastEq + 1);
+      const val = s.slice(lastEq + 1);
+      return prefix + encodeURIComponent(val);
+    }
+    // Plain value — encode fully
+    return encodeURIComponent(s);
+  });
   engine.registerFilter('slugify', v => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));
   engine.registerFilter('markdownify', v => md.render(String(v || '')));
   engine.registerFilter('strip_html', v => String(v || '').replace(/<[^>]+>/g,''));
@@ -457,29 +530,61 @@ function buildLiquidEngine(o, r, ref, context) {
   engine.registerFilter('inspect', v => JSON.stringify(v));
 
   // ── {% include %} tag with parameters ──────────────────────────
-  function splitArgs(s) {
-    const out = []; const re = /"([^"]*)"|'([^']*)'|(\S+)/g; let m;
-    while ((m = re.exec(s)) !== null) out.push(m[1] ?? m[2] ?? m[3]);
-    return out;
-  }
+  // Parses Jekyll include args: filename.html key="value" key2=var key3='val'
+  // Handles quoted values that contain spaces: caption="Monument Valley, UT"
   function parseIncludeArgs(argsStr) {
-    const tokens = splitArgs(argsStr || '');
+    const s = (argsStr || '').trim();
+    if (!s) return { name: null, params: {} };
+
+    const tokens = [];
+    // Tokenize: respect quoted strings at any position (including after key=)
+    // Matches: key="val with spaces", key='val', key=bareword, or bare filename
+    const re = /([\w./:-]+)=(?:"([^"]*)"|'([^']*)'|([^\s]*))|"([^"]*)"|'([^']*)'|([^\s=]+)/g;
+    let m;
+    while ((m = re.exec(s)) !== null) {
+      if (m[1] !== undefined) {
+        // key=value pair (quoted or bare)
+        tokens.push({ type: 'kv', key: m[1], val: m[2] ?? m[3] ?? m[4] ?? '' });
+      } else {
+        // bare token (include filename or unquoted string)
+        tokens.push({ type: 'bare', val: m[5] ?? m[6] ?? m[7] ?? '' });
+      }
+    }
+
     if (!tokens.length) return { name: null, params: {} };
-    const name = tokens[0]; const params = {};
-    for (let i = 1; i < tokens.length; i++) {
-      const t = tokens[i]; const eq = t.indexOf('=');
-      if (eq === -1) continue;
-      params[t.slice(0, eq)] = t.slice(eq + 1);
+
+    // First bare token is the include filename
+    const nameToken = tokens.find(t => t.type === 'bare');
+    const name = nameToken ? nameToken.val : null;
+    const params = {};
+    for (const t of tokens) {
+      if (t.type === 'kv') params[t.key] = t.val;
     }
     return { name, params };
   }
   async function evalLiquidValue(expr, ctx) {
-    if (!expr || /\s/.test(expr)) return expr;
+    if (!expr) return expr;
+    // Only attempt Liquid evaluation for dotted variable refs like include.src,
+    // page.title, site.baseurl, forloop.index — these MUST be resolved from context.
+    // Single-word tokens like "image", "true", "right" are ambiguous: they could be
+    // a variable ref OR a literal string value. We try evaluation first, and if the
+    // variable doesn't exist in context (resolves to empty), return the original expr.
+    const isDotted = /^[a-zA-Z_][\w.\[\]]*\.[\w.\[\]]+$/.test(expr);
+    const isPlainWord = /^[a-zA-Z_][\w-]*$/.test(expr);
+    // Non-variable literals (contain :, /, digits-only, etc.) → return as-is
+    if (!isDotted && !isPlainWord) return expr;
     try {
       const r = await engine.parseAndRender(`{{ ${expr} }}`, ctx);
       const t = (r || '').trim();
-      return t === '' ? expr : t;
-    } catch { return expr; }
+      if (isDotted) {
+        // Dotted ref: return resolved value (empty means variable is unset)
+        return t;
+      } else {
+        // Plain word: return resolved value only if context actually has it,
+        // otherwise treat as a literal string value
+        return t !== '' ? t : expr;
+      }
+    } catch { return isPlainWord ? expr : ''; }
   }
 
   const includeCache = new Map();
@@ -509,7 +614,13 @@ function buildLiquidEngine(o, r, ref, context) {
       }
       ctx.push({ include: includeObj });
       let rendered;
-      try { rendered = await engine.parseAndRender(src, ctx); }
+      try {
+        rendered = await engine.parseAndRender(src, ctx);
+        if (name.includes('image.html') || name.includes('media-url')) {
+          console.log(`[include:${name}] params:`, JSON.stringify(includeObj));
+          console.log(`[include:${name}] output:`, rendered.substring(0, 300));
+        }
+      }
       catch (e) { rendered = `<div class="include-placeholder">{% include ${name} %} — render error: ${e.message}</div>`; }
       finally { ctx.pop(); }
 
@@ -693,6 +804,9 @@ async function render() {
 
   console.log(`[preview] Final html length before srcdoc write: ${html.length}`);
   console.log(`[preview] html starts with: ${html.substring(0, 150)}`);
+  // Log any embed-image iframes BEFORE rewriting so we can see the raw Liquid output
+  const iframeMatches = html.match(/<iframe[^>]*embed-image[^>]*>/gi) || [];
+  iframeMatches.forEach(m => console.log('[preview] PRE-REWRITE iframe:', m));
 
   // ── 8. Rewrite relative URLs in the HTML string ──────────────
   const rawBase = `https://raw.githubusercontent.com/${o}/${r}/${ref}/`;
@@ -733,6 +847,13 @@ async function render() {
         opacity: .8; color: #e3b341;
       }
     </style>`;
+
+  // Inject Font Awesome if not already present (Chirpy's head.html is a gem
+  // file and stubbed out, so FA never gets added via the normal include chain)
+  if (!/<link[^>]*font.?awesome/i.test(html) && !/<script[^>]*font.?awesome/i.test(html) && !/<script[^>]*kit\.fontawesome/i.test(html)) {
+    const faLink = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">';
+    html = html.replace(/<\/head>/i, faLink + '\n</head>');
+  }
 
   // Insert banner styles just before </head>
   html = html.replace(/<\/head>/i, bannerCss + '</head>');
@@ -890,6 +1011,12 @@ function rewriteRelativeUrlsInString(html, rawBase, fileDir, deployedOrigin, bas
     // Already absolute or special scheme — leave alone
     if (/^(https?:|data:|mailto:|tel:|#|\/\/)/i.test(u)) return u;
 
+    // If URL contains a query string, resolve only the path portion and
+    // reattach the query string unchanged (avoids double-encoding)
+    const qIdx = u.indexOf('?');
+    const qs = qIdx !== -1 ? u.slice(qIdx) : '';
+    if (qIdx !== -1) u = u.slice(0, qIdx);
+
     // Apply media_subpath to relative image URLs (not starting with /)
     // This mirrors what Chirpy does server-side for post images
     if (isImage && mediaSubpath && !u.startsWith('/')) {
@@ -897,6 +1024,7 @@ function rewriteRelativeUrlsInString(html, rawBase, fileDir, deployedOrigin, bas
       // After prepending, u now starts with / (e.g. /assets/posts/monument-valley/img.jpg)
     }
 
+    let resolved;
     if (u.startsWith('/')) {
       if (forAsset) {
         // Avoid double-prepending baseurl. If the path already starts with
@@ -906,15 +1034,19 @@ function rewriteRelativeUrlsInString(html, rawBase, fileDir, deployedOrigin, bas
         if (baseurlPrefix && u.startsWith(baseurlPrefix + '/')) {
           // Path already has baseurl — prepend only the origin
           const origin = (deployedOrigin || '').replace(/\/$/, '');
-          return origin + u;
+          resolved = origin + u;
+        } else {
+          resolved = deployedBase + u;
         }
-        return deployedBase + u;
       } else {
-        return rawBase + u.replace(/^\//, '');
+        resolved = rawBase + u.replace(/^\//, '');
       }
+    } else {
+      // Relative path — resolve against file directory in repo
+      resolved = rawBase + fileDir + u;
     }
-    // Relative path — resolve against file directory in repo
-    return rawBase + fileDir + u;
+    // Reattach query string unmodified
+    return resolved + qs;
   }
 
   // src= attributes (img, script, source, video, audio, iframe)
