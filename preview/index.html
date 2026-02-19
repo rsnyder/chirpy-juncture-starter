@@ -95,6 +95,9 @@
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/liquidjs@10/dist/liquid.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@14/dist/markdown-it.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it-footnote@3/dist/markdown-it-footnote.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it-sub@1/dist/markdown-it-sub.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it-sup@1/dist/markdown-it-sup.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
 </head>
 <body>
@@ -123,6 +126,10 @@
 // ═══════════════════════════════════════════════════════════════
 
 const md = window.markdownit({ html: true, linkify: true, typographer: true });
+// Kramdown-compatible extensions
+if (window.markdownitFootnote) md.use(window.markdownitFootnote);
+if (window.markdownitSub)      md.use(window.markdownitSub);
+if (window.markdownitSup)      md.use(window.markdownitSup);
 
 const pbBadge  = document.getElementById('pb-badge');
 const pbFile   = document.getElementById('pb-file');
@@ -616,6 +623,9 @@ function buildLiquidEngine(o, r, ref, context) {
       let rendered;
       try {
         rendered = await engine.parseAndRender(src, ctx);
+        // Collapse multi-line HTML tags (e.g. <iframe\n  src=...>) into single
+        // lines so markdown-it doesn't wrap stray attributes in <p> tags
+        rendered = collapseMultilineTags(rendered);
         if (name.includes('image.html') || name.includes('media-url')) {
           console.log(`[include:${name}] params:`, JSON.stringify(includeObj));
           console.log(`[include:${name}] output:`, rendered.substring(0, 300));
@@ -739,9 +749,9 @@ async function render() {
   let renderedContent;
   try {
     const liquidExpanded = await engine.parseAndRender(pageBody, context);
-    renderedContent = applyKramdownAttributes(liquidExpanded, src => md.render(src));
+    renderedContent = applyKramdownAttributes(liquidExpanded, src => md.render(collapseMultilineTags(src)));
   } catch (e) {
-    renderedContent = applyKramdownAttributes(pageBody, src => md.render(src));
+    renderedContent = applyKramdownAttributes(pageBody, src => md.render(collapseMultilineTags(src)));
     setStatus(`Liquid error in post body (rendered raw): ${e.message}`, 'warn');
   }
 
@@ -848,6 +858,19 @@ async function render() {
       }
     </style>`;
 
+  // Inject footnote styles — markdown-it-footnote uses its own class names
+  // that need styling to match Chirpy's aesthetic
+  const footnoteCss = `<style>
+    .footnotes { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color, rgba(128,128,128,.3)); font-size: 0.875rem; opacity: 0.85; }
+    .footnotes ol { padding-left: 1.5rem; }
+    .footnotes li { margin-bottom: 0.4rem; line-height: 1.6; }
+    .footnote-ref { font-size: 0.75em; vertical-align: super; line-height: 0; margin-left: 1px; }
+    .footnote-ref a, .footnote-backref { color: var(--link-color, #4a9eff); text-decoration: none; }
+    .footnote-ref a:hover, .footnote-backref:hover { text-decoration: underline; }
+    .footnotes-sep { display: none; } /* hide <hr> since we use border-top above */
+  </style>`;
+  html = html.replace(/<\/head>/i, footnoteCss + '\n</head>');
+
   // Inject Font Awesome if not already present (Chirpy's head.html is a gem
   // file and stubbed out, so FA never gets added via the normal include chain)
   if (!/<link[^>]*font.?awesome/i.test(html) && !/<script[^>]*font.?awesome/i.test(html) && !/<script[^>]*kit\.fontawesome/i.test(html)) {
@@ -872,6 +895,23 @@ async function render() {
   iframe.srcdoc = html;
 
   setStatus(`Done · ${layoutChain.map(l=>l.name).join(' → ')} · ${new Date().toLocaleTimeString()}`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  COLLAPSE MULTI-LINE HTML TAGS
+// ═══════════════════════════════════════════════════════════════
+// markdown-it treats content inside an open HTML tag that spans multiple lines
+// as markdown, wrapping loose text/attributes in <p> tags and breaking the tag.
+// This collapses any multi-line HTML open tags into a single line before rendering.
+function collapseMultilineTags(src) {
+  // Match an opening HTML tag that contains a newline before its closing >
+  // e.g. <iframe\n  style="..."\n  src="...">
+  return src.replace(/<([a-zA-Z][a-zA-Z0-9-]*)(\s[^>]*?)>/gs, (match, tag, attrs) => {
+    if (!attrs.includes('\n')) return match; // already single-line
+    // Collapse internal whitespace/newlines to single spaces
+    const collapsed = attrs.replace(/\s*\n\s*/g, ' ').replace(/  +/g, ' ').trim();
+    return `<${tag} ${collapsed}>`;
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════

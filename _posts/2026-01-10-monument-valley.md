@@ -74,6 +74,7 @@ the park on a 17-mile (27 km) dirt road. Parts of Monument Valley, such as Myste
 only by guided tour.
 
 {% include embed/youtube.html vid="yg0As_HOvJk" id="video1" %}
+{% include embed/youtube.html vid="GGyiZ7SE3V4" id="video2" %}
 
 Monument Valley has been featured in many forms of media since the 1930s. Famed director John Ford used the location for
 a number of his Westerns. Film critic Keith Phipps wrote that "its five square miles [13 km2] have defined what decades
