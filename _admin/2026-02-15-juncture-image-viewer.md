@@ -1,9 +1,9 @@
 ---
-title: Adding Zoomable Images with Juncture
+title: "Juncture: Image Viewer"
 description: How to use the Juncture image viewer in your Markdown posts.
-permalink: /docs/juncture-image-viewer
+permalink: /admin/juncture-image-viewer
 date: 2026-02-15
-order: 4
+order: 11
 juncture:
     mode: 2col
     toolbar: false
@@ -237,11 +237,13 @@ Note that in this example the label for the zoomed region is taken from the cust
 
 ---
 
-# Required Attribute
+# Attributes
+
+## Required Attributes
 
 You must provide either a **src** or **manifest** attribute to the image tag.
 
-## src
+### src
 {: .attribute }
 
 The for the image src attribute.
@@ -260,10 +262,12 @@ You can use:
 
     src="wc:File_Name.jpg"
 
-## manifest
+### manifest
 {: .attribute }
 
 The for the image manifest attribute a full URL to an IIIF manifest must b provided.
+
+    manifest="https://iiif.harvardartmuseums.org/manifests/object/299843"
 
 For example, 
 
@@ -289,13 +293,13 @@ For example,
 
 ---
 
-# Optional Attributes
+## Optional Attributes
 
 These improve presentation but are not required.
 
 ---
 
-## caption
+### caption
 {: .attribute }
 
 Text displayed below the image.
@@ -306,7 +310,7 @@ Keep captions short and descriptive.
 
 ---
 
-## `cover="true"`
+### cover
 {: .attribute }
 
 Makes the image fill its space more dramatically, similar to a cover photo.
@@ -317,7 +321,8 @@ This works well for wide landscape images.
 
 ---
 
-## `aspect`
+### aspect
+{: .attribute }
 
 Controls the image shape.
 
@@ -327,7 +332,8 @@ You usually don’t need to change this unless you want a taller or more square 
 
 ---
 
-## `region`
+### region
+{: .attribute }
 
 Starts the viewer zoomed into a specific area.
 
@@ -337,7 +343,8 @@ Most users won’t type this manually. You can use the viewer’s selection tool
 
 ---
 
-## `rotate`
+### rotate
+{: .attribute }
 
 Rotates the image.
 
