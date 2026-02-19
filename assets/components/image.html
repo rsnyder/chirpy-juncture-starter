@@ -255,6 +255,8 @@
   <script type="module">
     import 'https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js';
 
+    console.log(location);
+
     // =========================================================================
     // DOM
     // =========================================================================
@@ -290,12 +292,12 @@
       max: ['', 'true', '1'].includes(params.get("max")),
     };
 
+    console.log(cfg);
+
     if (!cfg.src && !cfg.manifest) {
       showMsg(`Missing <code>?src=</code> or <code>?manifest=</code> parameter.`);
       throw new Error("Missing src or manifest");
     }
-
-    console.log(cfg)
 
     setContainerHeight();
 
