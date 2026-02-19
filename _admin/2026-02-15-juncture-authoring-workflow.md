@@ -143,7 +143,6 @@ order: 12
   const link = document.getElementById('bookmarklet-link');
   link.href = 'javascript:' + code;
 
-  // Warn if dragging isn't supported (mobile)
   link.addEventListener('click', function(e) {
     e.preventDefault();
     alert('Drag this button to your bookmarks bar instead of clicking it.');
