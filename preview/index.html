@@ -343,7 +343,7 @@ async function fetchRepoFile(o, r, ref, path) {
   if (!apiRateLimited) {
     const apiUrl = `https://api.github.com/repos/${o}/${r}/contents/${path}?ref=${ref}`;
     try {
-      const resp = await fetch(apiUrl, { headers: apiHeaders() });
+      const resp = await fetch(apiUrl, { headers: apiHeaders(), cache: 'no-store' });
       if (resp.ok) {
         const json = await resp.json();
         if (json.encoding === 'base64' && json.content) {
