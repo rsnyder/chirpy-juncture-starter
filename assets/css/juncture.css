@@ -223,6 +223,11 @@ figure.iframe-wrapper figcaption {
     padding: 0 !important;
 }
 
+.preview .container>.row {
+    max-width: 1000px;
+    margin: auto;
+}
+
 .preview .container,
 .col2>.container {
     width: 100% !important;
