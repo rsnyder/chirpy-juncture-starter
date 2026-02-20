@@ -1219,6 +1219,13 @@ async function render() {
     `<span class="pb-badge">PREVIEW</span>` +
     `<span>${layoutChain.map(l => l.name).join(' → ')} · ${new Date().toLocaleTimeString()}</span>` +
     `</div>`;
+  // Add 'preview' class to <body> so authors can write custom CSS using
+  // .preview { ... } to adjust presentation specifically in preview context
+  html = html.replace(/<body(\s[^>]*)?>/i, (match, attrs) => {
+    const a = attrs || '';
+    if (/\bclass=/i.test(a)) return match.replace(/\bclass="([^"]*)"/i, 'class="$1 preview"');
+    return `<body${a} class="preview">`;
+  });
   html = html.replace(/(<body[^>]*>)/i, '$1' + inlineBannerHtml);
 
   // ── 11. Write to iframe ──────────────────────────────────────────────────
