@@ -225,7 +225,7 @@ figure.iframe-wrapper figcaption {
 
 .preview .container>.row {
     max-width: 1000px;
-    margin: auto;
+    margin: auto !important;
 }
 
 .preview .container,
