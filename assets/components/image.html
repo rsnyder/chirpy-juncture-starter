@@ -697,6 +697,7 @@
       const iframe = window.frameElement;
       const caption = document.getElementById('caption')
       let width = document.getElementById('osd').clientWidth;
+      console.log(`Setting container height: imageAspectRatio=${imageAspectRatio}, width=${width}`);
       if (width) {
         if (!imageAspectRatio) {
           const raw = iframe?.style.getPropertyValue("aspect-ratio");
