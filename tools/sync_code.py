@@ -32,6 +32,7 @@ FILES_TO_SYNC = [
     "_admin/2019-08-11-customize-the-favicon.md",
     "_admin/2026-02-15-juncture-overview.md",
     "_admin/2026-02-15-juncture-image-viewer.md",
+    "_admin/2026-02-15-juncture-image-compare-viewer.md",
     "_admin/2026-02-15-juncture-map-viewer.md",
     "_admin/2026-02-15-juncture-youtube-viewer.md",
     "_admin/2026-02-15-juncture-authoring-workflow.md",

@@ -1,7 +1,7 @@
 ---
-title: "Juncture: Image Viewer"
+title: "Juncture: Compare Image Viewer"
 description: How to use the Juncture image viewer in your Markdown posts.
-permalink: /admin/juncture-image-viewer
+permalink: /admin/juncture-image-compare-viewer
 date: 2026-02-15
 media_subpath: /assets/posts/juncture
 # image: image.png
@@ -43,7 +43,7 @@ juncture:
     }
 </style>
 
-Juncture lets you add **zoomable, interactive images** to your Markdown posts using a simple include. You do not need to write HTML, CSS, or JavaScript.
+Juncture lets you add a image compare viewer to your Markdown posts using a simple include.
 
 ---
 
@@ -102,7 +102,6 @@ In addition to displaying regular images, the image viewer can also display a II
 </div>
 </div>
 
-
 ---
 
 # Action Link Example
@@ -124,15 +123,16 @@ When an image includes an `id` attribute it may be referenced in an action link.
 Note the addition of the `id` attribute with the value `img1`.
 
 ```markdown
-[Merrick Butte](img1/zoomto/pct:67.68,34.23,23.22,27)
+[zoomto example](img1/zoomto/pct:45.45,39.44,13.25,18.56)
 ```
 {: .nolineno }
 
-in this action link the first segment of the URL contains the `id` of the image to target in the action.  The second segment (`zoomto`) is the action to perform.  The third segment is the action argument, in this case the image region to zoom into. 
+in this action link the first segment of the URL contains the `id` of the image to target in the action.  The second segment (`zoomto`) is the action to perform.  The third segment is action argument, in this case the image region to zoom into.  Click the link below to trigger the action.
 
-Click this link to zoom in on [Merrick Butte](img1/zoomto/pct:67.68,34.23,23.22,27).
 
-Note that the label for the zoomed region is taken from the link text in this example.
+[zoomto example](img1/zoomto/pct:45.45,39.44,13.25,18.56)
+
+Note that in this example the label for the zoomed region is taken from the link text.
 
 </div>
 
@@ -161,13 +161,13 @@ Note that the label for the zoomed region is taken from the link text in this ex
 Note the addition of the `id` attribute with the value `img1`.
 
 ```markdown
-[Merrick Butte](img2/zoomto/pct:67.68,34.23,23.22,27){: label="Custom Label"}
+[zoomto example](img2/zoomto/pct:45.45,39.44,13.25,18.56){: label="Custom Label"}
 ```
 {: .nolineno }
 
 in this action link the first segment of the URL contains the `id` of the image to target in the action.  The second segment (`zoomto`) is the action to perform.  The third segment is action argument, in this case the image region to zoom into.  Click the link below to trigger the action.
 
-[Merrick Butte](img2/zoomto/pct:67.68,34.23,23.22,27){: label="Custom Label"}
+[zoomto example](img2/zoomto/pct:45.45,39.44,13.25,18.56){: label="Custom Label"}
 
 Note that in this example the label for the zoomed region is taken from the custom attributes appended to the link.
 
@@ -303,8 +303,7 @@ Selects image in a multi-image IIIF manifest.
 
     seq="3"
 
-
-By default, the first image in a manifest is displayed.  If multiple images are defined in a manifest others can be referenced using the `seq` attribute.  In this example the 2nd image in the manifest is displayed.
+By default, the first image in a IIIF manifest is displayed.  If multiple images are defined in a manifest others can be referenced using the `seq` attribute.  In this example the 2nd image in the manifest is displayed.
 
 <div class="example">
 <div markdown="1">
