@@ -142,18 +142,23 @@
 <main>
   <figure>
     <div class="video-wrapper">
-      <iframe
-        id="youtubePlayer"
-        allow="autoplay; encrypted-media"
-        allowfullscreen>
-      </iframe>
+      <div id="youtubePlayer"></div>
       <!-- In non-max mode, JS appends a .click-overlay div here -->
+      <!-- In max mode, the YT.Player API targets the div above -->
     </div>
     <figcaption>
       <span class="caption-label" id="videoTitle"></span>
     </figcaption>
   </figure>
 </main>
+
+<script>
+  // ── YouTube IFrame Player API bootstrap ──────────────────────────────────────
+  // The API script is loaded dynamically. Once ready it calls onYouTubeIframeAPIReady.
+  const ytApiScript = document.createElement('script')
+  ytApiScript.src = 'https://www.youtube.com/iframe_api'
+  document.head.appendChild(ytApiScript)
+</script>
 
 <script type="module">
 
@@ -205,31 +210,96 @@
 
   // ── Element references ──────────────────────────────────────────────────────
 
-  const wrapper       = document.querySelector('.video-wrapper')
-  const youtubePlayer = document.getElementById('youtubePlayer')
-  const videoTitle    = document.getElementById('videoTitle')
+  const wrapper    = document.querySelector('.video-wrapper')
+  const videoTitle = document.getElementById('videoTitle')
 
-  // ── YouTube embed setup ─────────────────────────────────────────────────────
+  // ytPlayer holds the YT.Player instance once the API is ready
+  let ytPlayer = null
 
-  const embedParams = new URLSearchParams({ enablejsapi: 1 })
+  // ── YouTube IFrame Player API ───────────────────────────────────────────────
+  // onYouTubeIframeAPIReady is called automatically by the API script once loaded.
+  // It replaces the #youtubePlayer div with a fully functional YT.Player instance,
+  // giving us direct access to getCurrentTime(), playVideo(), pauseVideo(), etc.
 
-  if (props.max) {
-    // Playback params are only applied in max mode.
-    // In non-max mode the embed is a static preview — no playing occurs.
-    if (props.autoplay) embedParams.set('autoplay', '1')  // requires allow="autoplay" on parent <iframe>
-    if (props.start)    embedParams.set('start', Math.floor(props.start))
-    if (props.end)      embedParams.set('end',   Math.ceil(props.end))
+  window.onYouTubeIframeAPIReady = () => {
+    const playerVars = { enablejsapi: 1 }
+
+    if (props.max) {
+      // Playback params only apply in max mode.
+      // In non-max mode the embed is a static preview — no playing occurs.
+      if (props.autoplay) playerVars.autoplay = 1  // requires allow="autoplay" on parent <iframe>
+      if (props.start)    playerVars.start    = Math.floor(props.start)
+      // Note: we intentionally do NOT pass 'end' to YouTube. YouTube treats it
+      // as a hard stop that prevents resume. We enforce end time ourselves via
+      // a getCurrentTime poll and pause + clear props.end on arrival.
+    }
+
+    ytPlayer = new YT.Player('youtubePlayer', {
+      videoId: props.vid,
+      playerVars,
+      host: 'https://www.youtube-nocookie.com',
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+      }
+    })
+
+    // Ensure the generated iframe has the right permissions
+    ytPlayer.a?.setAttribute('allow', 'autoplay; encrypted-media')
+    ytPlayer.a?.setAttribute('allowfullscreen', '')
   }
 
-  youtubePlayer.src =
-    `https://www.youtube-nocookie.com/embed/${props.vid}?${embedParams.toString()}`
+  // Called when the player is fully initialised and ready to receive commands
+  const onPlayerReady = () => {
+    // In non-max mode, inject the click overlay over the player iframe
+    if (!props.max) {
+      const overlay = document.createElement('div')
+      overlay.className = 'click-overlay'
+      wrapper.appendChild(overlay)
+      overlay.addEventListener('click', onPreviewClick)
+    }
+  }
 
-  // Register as a listener with the YouTube iframe API once the embed loads.
-  // This enables infoDelivery events (used for end-time enforcement) and
-  // allows sendCmd() calls to control playback via postMessage.
-  youtubePlayer.addEventListener('load', () => {
-    youtubePlayer.contentWindow.postMessage('{"event":"listening"}', '*')
-  })
+  // Called whenever the player state changes (playing, paused, ended, etc.)
+  const onPlayerStateChange = event => {
+    if (event.data === YT.PlayerState.PLAYING && props.end !== null) {
+      startEndPoll()
+    }
+  }
+
+  // ── End-time enforcement ────────────────────────────────────────────────────
+  // Polls getCurrentTime() while playing and pauses precisely at props.end.
+  // Clears props.end after pausing so the user can freely resume or replay.
+
+  let endPollInterval = null
+
+  const startEndPoll = () => {
+    if (endPollInterval) return  // already running
+    endPollInterval = setInterval(() => {
+      if (!ytPlayer || props.end === null) {
+        clearInterval(endPollInterval)
+        endPollInterval = null
+        return
+      }
+      if (ytPlayer.getCurrentTime() >= props.end) {
+        ytPlayer.pauseVideo()
+        props.end = null
+        clearInterval(endPollInterval)
+        endPollInterval = null
+      }
+    }, 200)
+  }
+
+  // ── Preview click — ask parent to open expanded dialog ──────────────────────
+  // Passes the current URL with ?max=true so the dialog instance inherits all
+  // props (vid, caption, autoplay, start, end).
+
+  const onPreviewClick = () => {
+    const maxParams = new URLSearchParams(location.search)
+    maxParams.set('max', 'true')
+    const maxSrc = `${location.pathname}?${maxParams.toString()}`
+    window.parent.postMessage({ type: 'showDialog', src: maxSrc, aspect: 1.7 }, '*')
+  }
 
   // ── Caption ─────────────────────────────────────────────────────────────────
 
@@ -246,56 +316,14 @@
       .catch(() => { /* silently ignore — caption just stays blank */ })
   }
 
-  // ── Non-max click overlay ───────────────────────────────────────────────────
-  // Intercepts all clicks in preview mode so the YouTube player never becomes
-  // interactive. Instead, a click asks the parent to open the expanded dialog,
-  // passing the current src URL with ?max=true appended. The max-mode instance
-  // loaded in the dialog inherits all current props (vid, caption, start, end,
-  // autoplay) from the URL.
-
-  if (!props.max) {
-    const overlay = document.createElement('div')
-    overlay.className = 'click-overlay'
-    wrapper.appendChild(overlay)
-
-    overlay.addEventListener('click', () => {
-      const maxParams = new URLSearchParams(location.search)
-      maxParams.set('max', 'true')
-      const maxSrc = `${location.pathname}?${maxParams.toString()}`
-      window.parent.postMessage({ type: 'showDialog', src: maxSrc, aspect: 1.7 }, '*')
-    })
-  }
-
-  // ── YouTube iframe API command helper ───────────────────────────────────────
-
-  /**
-   * Sends a command to the YouTube iframe API.
-   * See https://developers.google.com/youtube/iframe_api_reference
-   */
-  const sendCmd = (func, args = []) =>
-    youtubePlayer.contentWindow?.postMessage(
-      JSON.stringify({ event: 'command', func, args }), '*'
-    )
-
-  // ── inbound postMessage handler ─────────────────────────────────────────────
-  // Handles messages sent from the parent page to this component.
+  // ── Inbound postMessage handler ─────────────────────────────────────────────
+  // Handles action messages sent from the parent page to this component.
 
   window.addEventListener('message', event => {
     const data = parseMessage(event)
     if (!data) return
     if (data.channel === 'widget') return  // ignore Shoelace internal messages
 
-    // ── infoDelivery: YouTube iframe API time updates ──
-    // Fired ~4× per second while playing. Used to enforce end time precisely,
-    // since YouTube's native ?end= param can be off by a second or two.
-    if (data.event === 'infoDelivery' && data.info?.currentTime !== undefined) {
-      if (props.end !== null && data.info.currentTime >= props.end) {
-        sendCmd('pauseVideo')
-      }
-      return
-    }
-
-    // ── Action messages from the parent page ──
     const action = String(data.action || '').toLowerCase()
 
     if (action === 'playat') {
@@ -319,17 +347,16 @@
 
     } else if (action === 'play') {
       // Play the max-mode player, optionally seeking to a start time first.
-      // args[0] is an optional start time string.
+      if (!ytPlayer) return
       const start = data.args?.[0] ? toSeconds(data.args[0]) : null
-      if (start !== null) sendCmd('seekTo', [start, true])
-      sendCmd('playVideo')
+      if (start !== null) ytPlayer.seekTo(start, true)
+      ytPlayer.playVideo()
 
     } else if (action === 'pause') {
       // Pause the max-mode player.
-      sendCmd('pauseVideo')
+      ytPlayer?.pauseVideo()
     }
   })
 
 </script>
 </body>
-</html>

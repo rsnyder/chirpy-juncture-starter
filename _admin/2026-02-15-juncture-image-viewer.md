@@ -1,17 +1,19 @@
 ---
-title: "Juncture: YouTube Viewer"
-description: How to use the Juncture YouTube viewer in your Markdown posts.
-permalink: /admin/juncture-youtube-viewer
-date: 2026-02-22
+title: "Juncture: Image Viewer"
+description: How to use the Juncture image viewer in your Markdown posts.
+permalink: /admin/juncture-image-viewer
+date: 2026-02-15
 media_subpath: /assets/posts/juncture
-order: 12
+# image: image.png
+# show_header_image: false
+order: 11
 juncture:
     mode: flat
     toolbar: false
 ---
 <style>
     @media (min-width: 1650px) {
-        #main-wrapper>.container {
+    #main-wrapper>.container {
             max-width: 1600px;
             padding-left: 1.75rem !important;
             padding-right: 1.75rem !important;
@@ -21,6 +23,7 @@ juncture:
         display: grid;
         gap: 1rem;
     }
+
     @media (min-width: 640px) {
         .example {
             grid-template-columns: 1fr 1fr;
@@ -42,119 +45,160 @@ juncture:
 
 ## Overview
 
-The Juncture YouTube Viewer embeds a YouTube video in your page as a clean, responsive preview. It looks similar to a standard embedded video, but behaves differently when clicked.
+At first glance, the Juncture Image Viewer looks similar to the standard image support built into Jekyll and the Chirpy theme. It displays a clean, responsive image in the page, just like a normal Markdown image.
 
-When a reader clicks the preview, Juncture opens a **larger, expanded viewer** using the full available screen width. This gives the reader a much better viewing experience without forcing a large player on the page itself.
+The difference becomes clear when the image is clicked.
 
-This two-mode design keeps your article layout clean and readable while still making video a first-class part of the content.
+When a reader clicks the page image, Juncture opens a larger viewer using the **highest-resolution version available**. This version supports smooth zooming and panning, allowing readers to explore fine detail. The image shown in the page itself is optimized for normal web viewing, so your page loads quickly and looks clean. The high-resolution version is only loaded when needed.
 
-### Preview Mode and Expanded Mode
+This makes the Juncture viewer ideal for:
 
-The viewer operates in two modes:
+- Maps  
+- Archival photographs  
+- Works of art  
+- Scientific or historical illustrations  
+- Any image where detail matters  
 
-**Preview mode** (default) renders a compact, non-playing embed in the page. The player is intentionally inactive — clicking anywhere on it opens the expanded viewer. No video loads or plays until the reader chooses to watch.
+### First-Class Support for Wikimedia Commons
 
-**Expanded mode** opens automatically when the reader clicks the preview. The video loads in a large dialog at full width and, if configured, begins playing immediately at a specified time.
+The Juncture viewer makes using Wikimedia Commons especially convenient.
+
+You can reference a Commons image either by:
+
+- Full Commons URL  
+- The shorthand format: `wc:File_Name.jpg`
+
+Juncture automatically:
+
+- Retrieves the optimal image size for the page  
+- Loads the highest-resolution version for exploration  
+- Pulls caption and attribution information from the Commons API  
+- Displays proper credit and licensing automatically  
+
+This removes much of the friction normally involved in correctly using Commons images.
 
 ### Interactive Storytelling
 
-Where the YouTube viewer goes beyond a simple embed is in **interactivity**.
+Where Juncture goes beyond a traditional image viewer is in **interactivity**.
 
-You can link text in your article to viewer actions, such as:
+You can link text to viewer actions such as:
 
-- `playat` — open the expanded viewer and begin playing at a specific timestamp
+- `zoomto` — zoom to a specific region of the image  
+- Display a label identifying the area of interest  
 
-This allows your writing to direct the reader to the right moment in a video. Instead of saying "see the scene at 2:30," the reader can click a link and the video opens and plays from exactly that point.
+This allows your writing to guide the reader visually. Instead of saying “look in the upper right corner,” you can make the image respond directly when the reader clicks a link.
+
+The result is a more immersive reading experience — one where the image becomes part of the narrative rather than just an illustration.
 
 ---
 
 In short:
 
-- Use a standard YouTube embed when you simply need a video in the page.
-- Use the Juncture YouTube Viewer when timing, interactivity, or a clean layout matters.
+- Use the standard Chirpy image when you simply need to display a picture.
+- Use the Juncture Image Viewer when the image is something readers should explore.
 
 ## Attributes
 
 ### Required Attributes
 
-You must provide a **vid** attribute.
+You must provide either a **src** or **manifest** attribute to the image tag.
 
 ---
 
-#### vid
+#### src
 {: .attribute }
 
-The YouTube video ID. This is the short code found in the video's URL after `?v=`.
+The `src` attribute define the image to display.  You can use:
 
-    vid="dQw4w9WgXcQ"
+**A local image**
 
-For the URL `https://www.youtube.com/watch?v=dQw4w9WgXcQ`, the ID is `dQw4w9WgXcQ`.
+    src="/assets/posts/my-post/photo.jpg"
+
+**A full web URL**
+
+    src="https://example.org/image.jpg"
+
+**A Wikimedia shortcut**
+
+    src="wc:File_Name.jpg"
+
+---
+
+#### manifest
+{: .attribute }
+
+The for the image manifest attribute a full URL to an IIIF manifest must b provided.
+
+    manifest="https://iiif.harvardartmuseums.org/manifests/object/299843"
 
 ---
 
 ### Optional Attributes
 
-These improve presentation and control playback but are not required.
+These improve presentation but are not required.
+
+#### aspect
+{: .attribute }
+
+---
+
+Controls the image shape.
+
+    aspect="1200/630"
+    aspect="1"
+
+You usually don’t need to change this unless you want a taller or more square presentation.
 
 ---
 
 #### caption
 {: .attribute }
 
-Text displayed below the video in the caption bar. If omitted, the video's title is fetched automatically from YouTube.
+Text displayed below the image.
 
-    caption="Apollo 11 Moon Landing, July 1969"
+    caption="Monument Valley, UT"
 
-Use a caption when you want to provide context that differs from the YouTube title, or to avoid a network request on page load.
-
----
-
-#### autoplay
-{: .attribute }
-
-When present, the video begins playing automatically when the expanded viewer opens.
-
-    autoplay="true"
-
-Autoplay only applies in expanded mode. The preview in the page is always inactive regardless of this setting.
-
-> **Note:** Autoplay with sound requires the viewer to be served from a page that passes `allow="autoplay"` on its iframe. This is handled automatically by Juncture.
+Keep captions short and descriptive.
 
 ---
 
-#### start
+#### cover
 {: .attribute }
 
-The time at which playback begins. Accepts either seconds or `h:mm:ss` format. Defaults to `0` if omitted.
+Makes the image fill its space more dramatically, similar to a cover photo.
 
-    start="90"
-    start="1:30"
-    start="1:02:30"
+    cover="true"
 
-When used with `autoplay`, the video opens and immediately begins playing from this position.
+This works well for wide landscape images.
 
 ---
 
-#### end
+#### region
 {: .attribute }
 
-The time at which playback stops. Accepts either seconds or `h:mm:ss` format. If omitted, the video plays to its natural end.
+Starts the viewer zoomed into a specific area.
 
-    end="150"
-    end="2:30"
+    region="pct:10,20,30,40"
 
-The player pauses precisely at this time. Use `start` and `end` together to highlight a specific clip within a longer video.
+Most users won’t type this manually. You can use the viewer’s selection tool to generate region values.
 
 ---
 
-#### id
+#### rotate
 {: .attribute }
 
-An identifier for the viewer, required when using action links.
+Rotates the image.
 
-    id="vid1"
+    rotate="90"
 
-The `id` is used by action links in the article text to target this specific viewer. See the [Action Link Example](#action-link-example) below.
+---
+
+#### seq
+{: .attribute }
+
+Selects image in a multi-image IIIF manifest.  By default, the first image in a manifest is displayed.  If multiple images are defined in a manifest others can be referenced using the `seq` attribute.  In this example the 2nd image in the manifest is displayed.
+
+    seq="3"
 
 ---
 
@@ -162,178 +206,141 @@ The `id` is used by action links in the article text to target this specific vie
 
 ### The Simplest Example
 
-This creates a video preview that when clicked will open the expanded viewer.
+This creates an image that when clicked will open a dialog with an image at full resolution with zoom and pan features enabled.
 
 <div class="example">
 
 <div markdown="1">
 {% raw %}
 ```liquid
-{% include embed/youtube.html
-    vid="dQw4w9WgXcQ"
+{% include embed/image.html
+    src="wc:Monument_Valley,_Utah,_USA.jpg"
 %}
 ```
 {: .nolineno }
 {% endraw %}
+
 </div>
 
 <div>
-{% include embed/youtube.html
-    vid="dQw4w9WgXcQ"
+{% include embed/image.html
+    src="wc:Monument_Valley,_Utah,_USA.jpg"
+    cover="true"
 %}
 </div>
 
 </div>
 
-The video title is fetched automatically from YouTube and displayed in the caption bar. Click the preview to open the expanded viewer.
+This uses a Wikimedia Commons image.  When using a Commons image the caption, attribution statement and license (if needed) are automatically added.
+
+Click on the image to open the interactive pan and zoom viewer on a high-resolution version of the image.
 
 ---
 
-### Autoplay with Start and End Times
+### IIIF Example
 
-This example opens the expanded viewer and immediately plays a specific segment of the video.
+In addition to displaying regular images, the image viewer can also display a IIIF image.  The IIIF image is referenced using a manifest URL.
 
 <div class="example">
-
 <div markdown="1">
 {% raw %}
 ```liquid
-{% include embed/youtube.html
-    vid="dQw4w9WgXcQ"
-    autoplay="true"
-    start="42"
-    end="1:15"
-    caption="The famous chorus"
+{% include embed/image.html
+    manifest="https://iiif.harvardartmuseums.org/manifests/object/299843"
 %}
 ```
 {: .nolineno }
 {% endraw %}
+
 </div>
 
 <div>
-{% include embed/youtube.html
-    vid="dQw4w9WgXcQ"
-    autoplay="true"
-    start="42"
-    end="1:15"
-    caption="The famous chorus"
+{% include embed/image.html
+    manifest="https://iiif.harvardartmuseums.org/manifests/object/299843"
 %}
 </div>
-
 </div>
 
-When the preview is clicked, the expanded viewer opens, seeks immediately to 0:42, plays until 1:15, then pauses. The custom caption overrides the YouTube title.
 
 ---
 
 ### Action Link Example
 
-An action link is a standard Markdown link where the URL is formatted to trigger an action on a referenced viewer when clicked. To use an action link the viewer must include an `id` attribute.
+An action link is a standard Markdown link where the URL is formatted with information needed trigger an action on the referenced item when clicked.  To use an action link the image must include an `id` attribute so that it may be referenced in an action link.  In tbe example below that `zoomto` action is triggered on the image with the `img1` id.
 
 <div class="example">
-
 <div markdown="1">
 {% raw %}
 ```liquid
-{% include embed/youtube.html
-    id="vid1"
-    vid="dQw4w9WgXcQ"
+{% include embed/image.html
+    id="img1"
+    src="wc:Monument_Valley,_Utah,_USA.jpg"
 %}
 ```
 {: .nolineno }
 {% endraw %}
 
-Note the addition of the `id` attribute with the value `vid1`.
+Note the addition of the `id` attribute with the value `img1`.
 
 ```markdown
-[Watch the chorus](vid1/playat/42,75)
+[Merrick Butte](img1/zoomto/pct:67.68,34.23,23.22,27)
+```
+{: .nolineno }
+
+
+</div>
+
+<div>
+{% include embed/image.html
+    id="img1"
+    src="wc:Monument_Valley,_Utah,_USA.jpg"
+%}
+</div>
+</div>
+
+in this action link the first segment of the URL contains the `id` of the image to target in the action.  The second segment (`zoomto`) is the action to perform.  The third segment is the action argument, in this case the image region to zoom into. 
+
+Click this link to zoom in on [Merrick Butte](img1/zoomto/pct:67.68,34.23,23.22,27).
+
+Note that the label for the zoomed region is taken from the action link text in this example.  The next example shows how to define a custom label.
+
+### Action Link Example With Custom Label
+
+When the action link is clicked, the image viewer will zoom into the area defined and display a label.  By default the text in the action link is used for the label.  While this is convenient you may use other text by appending an attribute block to the link with a *label* attribute defined.
+
+<div class="example">
+<div markdown="1">
+{% raw %}
+```liquid
+{% include embed/image.html
+    id="img2"
+    src="wc:Monument_Valley,_Utah,_USA.jpg"
+%}
+```
+{: .nolineno }
+{% endraw %}
+
+Note the addition of the `id` attribute with the value `img1`.
+
+```markdown
+[Merrick Butte](img2/zoomto/pct:67.68,34.23,23.22,27){: label="Custom Label"}
 ```
 {: .nolineno }
 
 </div>
 
 <div>
-{% include embed/youtube.html
-    id="vid1"
-    vid="dQw4w9WgXcQ"
+{% include embed/image.html
+    id="img2"
+    src="wc:Monument_Valley,_Utah,_USA.jpg"
 %}
 </div>
-
 </div>
 
-In this action link the first segment of the URL is the `id` of the viewer to target. The second segment (`playat`) is the action to perform. The third segment is the argument — a comma-separated start time and optional end time in seconds or `h:mm:ss` format.
+In this action link the first segment of the URL contains the `id` of the image to target in the action.  The second segment (`zoomto`) is the action to perform.  The third segment is action argument, in this case the image region to zoom into.  Click the link below to trigger the action.
 
-Click this link to jump to the chorus: [Watch the chorus](vid1/playat/42,75)
+[zoomto action link with](img2/zoomto/pct:67.68,34.23,23.22,27){: label="Custom Label"}
 
-The expanded viewer will open and begin playing from 0:42, stopping at 1:15.
+Note that in this example the label for the zoomed region is taken from the custom attributes appended to the link.
 
 ---
-
-### Action Link Example with Only a Start Time
-
-If you only want to open the viewer at a specific point and let it play through, omit the end time.
-
-<div class="example">
-
-<div markdown="1">
-{% raw %}
-```liquid
-{% include embed/youtube.html
-    id="vid2"
-    vid="dQw4w9WgXcQ"
-%}
-```
-{: .nolineno }
-{% endraw %}
-
-```markdown
-[Watch from here](vid2/playat/1:30)
-```
-{: .nolineno }
-
-</div>
-
-<div>
-{% include embed/youtube.html
-    id="vid2"
-    vid="dQw4w9WgXcQ"
-%}
-</div>
-
-</div>
-
-Click this link to open the viewer at 1:30: [Watch from here](vid2/playat/1:30)
-
-The expanded viewer opens and plays from 1:30 to the end of the video.
-
----
-
-## Action Link Reference
-
-Action links follow this URL format:
-
-```
-{viewer-id}/{action}/{args}
-```
-
-| Segment | Description |
-|---|---|
-| `viewer-id` | The `id` attribute of the target viewer |
-| `action` | The action to perform (see table below) |
-| `args` | Action-specific argument string |
-
-### Supported Actions
-
-| Action | Argument format | Description |
-|---|---|---|
-| `playat` | `start` or `start,end` | Opens the expanded viewer and plays from `start`, optionally stopping at `end`. Times may be in seconds or `h:mm:ss`. |
-
-### Argument Format Examples
-
-| Argument | Meaning |
-|---|---|
-| `90` | Start at 1:30, play to end |
-| `1:30` | Start at 1:30, play to end |
-| `90,150` | Start at 1:30, stop at 2:30 |
-| `1:30,2:30` | Start at 1:30, stop at 2:30 |
-| `1:02:30,1:05:00` | Start at 1h 2m 30s, stop at 1h 5m |

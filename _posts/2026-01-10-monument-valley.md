@@ -73,14 +73,14 @@ a national park. Oljato, for example, is also within the area designated as Monu
 the park on a 17-mile (27 km) dirt road. Parts of Monument Valley, such as Mystery Valley and Hunts Mesa, are accessible
 only by guided tour.
 
-{% include embed/youtube.html vid="yg0As_HOvJk" id="video1" autoplay="true" %}
+{% include embed/youtube.html vid="yg0As_HOvJk" id="video1" autoplay="true" start="60" end="65" %}
 {% include embed/youtube.html vid="GGyiZ7SE3V4" id="video2" %}
 
 Monument Valley has been featured in many forms of media since the 1930s. Famed director John Ford used the location for
 a number of his Westerns. Film critic Keith Phipps wrote that "its five square miles [13 km2] have defined what decades
 of moviegoers think of when they imagine the American West".[^3]
 
-[play test1](video1/playat/55,60)
+[I'm pretty tired](video2/playat/50)
 
 ---
 
