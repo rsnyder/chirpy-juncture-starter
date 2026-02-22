@@ -68,7 +68,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YouTube</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -139,224 +143,224 @@
 
 <body>
 
-<main>
-  <figure>
-    <div class="video-wrapper">
-      <div id="youtubePlayer"></div>
-      <!-- In non-max mode, JS appends a .click-overlay div here -->
-      <!-- In max mode, the YT.Player API targets the div above -->
-    </div>
-    <figcaption>
-      <span class="caption-label" id="videoTitle"></span>
-    </figcaption>
-  </figure>
-</main>
+  <main>
+    <figure>
+      <div class="video-wrapper">
+        <div id="youtubePlayer"></div>
+        <!-- In non-max mode, JS appends a .click-overlay div here -->
+        <!-- In max mode, the YT.Player API targets the div above -->
+      </div>
+      <figcaption>
+        <span class="caption-label" id="videoTitle"></span>
+      </figcaption>
+    </figure>
+  </main>
 
-<script>
-  // ── YouTube IFrame Player API bootstrap ──────────────────────────────────────
-  // The API script is loaded dynamically. Once ready it calls onYouTubeIframeAPIReady.
-  const ytApiScript = document.createElement('script')
-  ytApiScript.src = 'https://www.youtube.com/iframe_api'
-  document.head.appendChild(ytApiScript)
-</script>
+  <script>
+    // ── YouTube IFrame Player API bootstrap ──────────────────────────────────────
+    // The API script is loaded dynamically. Once ready it calls onYouTubeIframeAPIReady.
+    const ytApiScript = document.createElement('script')
+    ytApiScript.src = 'https://www.youtube.com/iframe_api'
+    document.head.appendChild(ytApiScript)
+  </script>
 
-<script type="module">
+  <script type="module">
 
-  // ── Utilities ───────────────────────────────────────────────────────────────
+    // ── Utilities ───────────────────────────────────────────────────────────────
 
-  /**
-   * Returns true if a URL query param is present with no value (?key),
-   * the value "true", or the value "1". Returns `def` if the param is absent.
-   */
-  const boolParam = (params, key, def = false) => {
-    if (!params.has(key)) return def
-    const v = params.get(key)
-    return v === '' || v === 'true' || v === '1'
-  }
-
-  /**
-   * Converts a time value to seconds.
-   * Accepts:
-   *   null / undefined  → null
-   *   numeric string    → float (e.g. "90" → 90)
-   *   h:mm:ss string    → seconds (e.g. "1:30" → 90, "1:02:30" → 3750)
-   */
-  const toSeconds = str => {
-    if (str === null || str === undefined) return null
-    if (!isNaN(str)) return parseFloat(str)
-    return str.split(':').slice(0, 3).map(Number).reduce((acc, v) => acc * 60 + v, 0)
-  }
-
-  /**
-   * Safely parses a postMessage event payload.
-   * Returns the parsed object or null if parsing fails.
-   */
-  const parseMessage = event => {
-    try { return JSON.parse(event.data) } catch { return null }
-  }
-
-  // ── Props — parsed from URL query string ────────────────────────────────────
-
-  const params = new URLSearchParams(location.search)
-
-  const props = {
-    vid:      params.get('vid'),                      // YouTube video ID (required)
-    max:      boolParam(params, 'max'),               // true when loaded inside the expanded dialog
-    autoplay: boolParam(params, 'autoplay'),          // auto-start playback in max mode
-    caption:  params.get('caption') || null,          // override caption; falls back to YouTube title
-    start:    toSeconds(params.get('start')),         // playback start time in seconds (null = 0)
-    end:      toSeconds(params.get('end')),           // playback end time in seconds (null = play to end)
-  }
-
-  // ── Element references ──────────────────────────────────────────────────────
-
-  const wrapper    = document.querySelector('.video-wrapper')
-  const videoTitle = document.getElementById('videoTitle')
-
-  // ytPlayer holds the YT.Player instance once the API is ready
-  let ytPlayer = null
-
-  // ── YouTube IFrame Player API ───────────────────────────────────────────────
-  // onYouTubeIframeAPIReady is called automatically by the API script once loaded.
-  // It replaces the #youtubePlayer div with a fully functional YT.Player instance,
-  // giving us direct access to getCurrentTime(), playVideo(), pauseVideo(), etc.
-
-  window.onYouTubeIframeAPIReady = () => {
-    const playerVars = { enablejsapi: 1 }
-
-    if (props.max) {
-      // Playback params only apply in max mode.
-      // In non-max mode the embed is a static preview — no playing occurs.
-      if (props.autoplay) playerVars.autoplay = 1  // requires allow="autoplay" on parent <iframe>
-      if (props.start)    playerVars.start    = Math.floor(props.start)
-      // Note: we intentionally do NOT pass 'end' to YouTube. YouTube treats it
-      // as a hard stop that prevents resume. We enforce end time ourselves via
-      // a getCurrentTime poll and pause + clear props.end on arrival.
+    /**
+     * Returns true if a URL query param is present with no value (?key),
+     * the value "true", or the value "1". Returns `def` if the param is absent.
+     */
+    const boolParam = (params, key, def = false) => {
+      if (!params.has(key)) return def
+      const v = params.get(key)
+      return v === '' || v === 'true' || v === '1'
     }
 
-    ytPlayer = new YT.Player('youtubePlayer', {
-      videoId: props.vid,
-      playerVars,
-      host: 'https://www.youtube-nocookie.com',
-      events: {
-        onReady: onPlayerReady,
-        onStateChange: onPlayerStateChange,
+    /**
+     * Converts a time value to seconds.
+     * Accepts:
+     *   null / undefined  → null
+     *   numeric string    → float (e.g. "90" → 90)
+     *   h:mm:ss string    → seconds (e.g. "1:30" → 90, "1:02:30" → 3750)
+     */
+    const toSeconds = str => {
+      if (str === null || str === undefined) return null
+      if (!isNaN(str)) return parseFloat(str)
+      return str.split(':').slice(0, 3).map(Number).reduce((acc, v) => acc * 60 + v, 0)
+    }
+
+    /**
+     * Safely parses a postMessage event payload.
+     * Returns the parsed object or null if parsing fails.
+     */
+    const parseMessage = event => {
+      try { return JSON.parse(event.data) } catch { return null }
+    }
+
+    // ── Props — parsed from URL query string ────────────────────────────────────
+
+    const params = new URLSearchParams(location.search)
+
+    const props = {
+      vid: params.get('vid'),                      // YouTube video ID (required)
+      max: boolParam(params, 'max'),               // true when loaded inside the expanded dialog
+      autoplay: boolParam(params, 'autoplay'),          // auto-start playback in max mode
+      caption: params.get('caption') || null,          // override caption; falls back to YouTube title
+      start: toSeconds(params.get('start')),         // playback start time in seconds (null = 0)
+      end: toSeconds(params.get('end')),           // playback end time in seconds (null = play to end)
+    }
+
+    // ── Element references ──────────────────────────────────────────────────────
+
+    const wrapper = document.querySelector('.video-wrapper')
+    const videoTitle = document.getElementById('videoTitle')
+
+    // ytPlayer holds the YT.Player instance once the API is ready
+    let ytPlayer = null
+
+    // ── YouTube IFrame Player API ───────────────────────────────────────────────
+    // onYouTubeIframeAPIReady is called automatically by the API script once loaded.
+    // It replaces the #youtubePlayer div with a fully functional YT.Player instance,
+    // giving us direct access to getCurrentTime(), playVideo(), pauseVideo(), etc.
+
+    window.onYouTubeIframeAPIReady = () => {
+      const playerVars = { enablejsapi: 1 }
+
+      if (props.max) {
+        // Playback params only apply in max mode.
+        // In non-max mode the embed is a static preview — no playing occurs.
+        if (props.autoplay) playerVars.autoplay = 1  // requires allow="autoplay" on parent <iframe>
+        if (props.start) playerVars.start = Math.floor(props.start)
+        // Note: we intentionally do NOT pass 'end' to YouTube. YouTube treats it
+        // as a hard stop that prevents resume. We enforce end time ourselves via
+        // a getCurrentTime poll and pause + clear props.end on arrival.
+      }
+
+      ytPlayer = new YT.Player('youtubePlayer', {
+        videoId: props.vid,
+        playerVars,
+        host: 'https://www.youtube-nocookie.com',
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange,
+        }
+      })
+
+      // Ensure the generated iframe has the right permissions
+      ytPlayer.a?.setAttribute('allow', 'autoplay; encrypted-media')
+      ytPlayer.a?.setAttribute('allowfullscreen', '')
+    }
+
+    // Called when the player is fully initialised and ready to receive commands
+    const onPlayerReady = () => {
+      // In non-max mode, inject the click overlay over the player iframe
+      if (!props.max) {
+        const overlay = document.createElement('div')
+        overlay.className = 'click-overlay'
+        wrapper.appendChild(overlay)
+        overlay.addEventListener('click', onPreviewClick)
+      }
+    }
+
+    // Called whenever the player state changes (playing, paused, ended, etc.)
+    const onPlayerStateChange = event => {
+      if (event.data === YT.PlayerState.PLAYING && props.end !== null) {
+        startEndPoll()
+      }
+    }
+
+    // ── End-time enforcement ────────────────────────────────────────────────────
+    // Polls getCurrentTime() while playing and pauses precisely at props.end.
+    // Clears props.end after pausing so the user can freely resume or replay.
+
+    let endPollInterval = null
+
+    const startEndPoll = () => {
+      if (endPollInterval) return  // already running
+      endPollInterval = setInterval(() => {
+        if (!ytPlayer || props.end === null) {
+          clearInterval(endPollInterval)
+          endPollInterval = null
+          return
+        }
+        if (ytPlayer.getCurrentTime() >= props.end) {
+          ytPlayer.pauseVideo()
+          props.end = null
+          clearInterval(endPollInterval)
+          endPollInterval = null
+        }
+      }, 200)
+    }
+
+    // ── Preview click — ask parent to open expanded dialog ──────────────────────
+    // Passes the current URL with ?max=true so the dialog instance inherits all
+    // props (vid, caption, autoplay, start, end).
+
+    const onPreviewClick = () => {
+      const maxParams = new URLSearchParams(location.search)
+      maxParams.set('max', 'true')
+      const maxSrc = `${location.pathname}?${maxParams.toString()}`
+      window.parent.postMessage({ type: 'showDialog', src: maxSrc, aspect: 1.7 }, '*')
+    }
+
+    // ── Caption ─────────────────────────────────────────────────────────────────
+
+    if (props.caption) {
+      // Use the explicitly provided caption without any network request
+      videoTitle.textContent = props.caption
+    } else {
+      // Fall back to the video title from YouTube's oembed API
+      const oembedUrl =
+        `https://youtube.com/oembed?url=${encodeURIComponent('https://www.youtube.com/watch?v=' + props.vid)}&format=json`
+      fetch(oembedUrl)
+        .then(r => r.json())
+        .then(d => { videoTitle.textContent = d.title })
+        .catch(() => { /* silently ignore — caption just stays blank */ })
+    }
+
+    // ── Inbound postMessage handler ─────────────────────────────────────────────
+    // Handles action messages sent from the parent page to this component.
+
+    window.addEventListener('message', event => {
+      const data = parseMessage(event)
+      if (!data) return
+      if (data.channel === 'widget') return  // ignore Shoelace internal messages
+
+      const action = String(data.action || '').toLowerCase()
+
+      if (action === 'playat') {
+        // Open the expanded dialog and play from a specified time range.
+        // args[0] is a comma-separated "start" or "start,end" string.
+        // Example data-args values: "90"  "1:30"  "1:30,2:45"
+        if (!Array.isArray(data.args) || !data.args[0]) return
+        const parts = data.args[0].split(',').map(s => s.trim())
+        const start = toSeconds(parts[0])
+        const end = parts[1] ? toSeconds(parts[1]) : null
+
+        const maxParams = new URLSearchParams(location.search)
+        maxParams.set('max', 'true')
+        maxParams.set('autoplay', 'true')
+        maxParams.set('start', start !== null ? start : 0)
+        if (end !== null) maxParams.set('end', end)
+        else maxParams.delete('end')
+
+        const maxSrc = `${location.pathname}?${maxParams.toString()}`
+        window.parent.postMessage({ type: 'showDialog', src: maxSrc, aspect: 1.7 }, '*')
+
+      } else if (action === 'play') {
+        // Play the max-mode player, optionally seeking to a start time first.
+        if (!ytPlayer) return
+        const start = data.args?.[0] ? toSeconds(data.args[0]) : null
+        if (start !== null) ytPlayer.seekTo(start, true)
+        ytPlayer.playVideo()
+
+      } else if (action === 'pause') {
+        // Pause the max-mode player.
+        ytPlayer?.pauseVideo()
       }
     })
 
-    // Ensure the generated iframe has the right permissions
-    ytPlayer.a?.setAttribute('allow', 'autoplay; encrypted-media')
-    ytPlayer.a?.setAttribute('allowfullscreen', '')
-  }
-
-  // Called when the player is fully initialised and ready to receive commands
-  const onPlayerReady = () => {
-    // In non-max mode, inject the click overlay over the player iframe
-    if (!props.max) {
-      const overlay = document.createElement('div')
-      overlay.className = 'click-overlay'
-      wrapper.appendChild(overlay)
-      overlay.addEventListener('click', onPreviewClick)
-    }
-  }
-
-  // Called whenever the player state changes (playing, paused, ended, etc.)
-  const onPlayerStateChange = event => {
-    if (event.data === YT.PlayerState.PLAYING && props.end !== null) {
-      startEndPoll()
-    }
-  }
-
-  // ── End-time enforcement ────────────────────────────────────────────────────
-  // Polls getCurrentTime() while playing and pauses precisely at props.end.
-  // Clears props.end after pausing so the user can freely resume or replay.
-
-  let endPollInterval = null
-
-  const startEndPoll = () => {
-    if (endPollInterval) return  // already running
-    endPollInterval = setInterval(() => {
-      if (!ytPlayer || props.end === null) {
-        clearInterval(endPollInterval)
-        endPollInterval = null
-        return
-      }
-      if (ytPlayer.getCurrentTime() >= props.end) {
-        ytPlayer.pauseVideo()
-        props.end = null
-        clearInterval(endPollInterval)
-        endPollInterval = null
-      }
-    }, 200)
-  }
-
-  // ── Preview click — ask parent to open expanded dialog ──────────────────────
-  // Passes the current URL with ?max=true so the dialog instance inherits all
-  // props (vid, caption, autoplay, start, end).
-
-  const onPreviewClick = () => {
-    const maxParams = new URLSearchParams(location.search)
-    maxParams.set('max', 'true')
-    const maxSrc = `${location.pathname}?${maxParams.toString()}`
-    window.parent.postMessage({ type: 'showDialog', src: maxSrc, aspect: 1.7 }, '*')
-  }
-
-  // ── Caption ─────────────────────────────────────────────────────────────────
-
-  if (props.caption) {
-    // Use the explicitly provided caption without any network request
-    videoTitle.textContent = props.caption
-  } else {
-    // Fall back to the video title from YouTube's oembed API
-    const oembedUrl =
-      `https://youtube.com/oembed?url=${encodeURIComponent('https://www.youtube.com/watch?v=' + props.vid)}&format=json`
-    fetch(oembedUrl)
-      .then(r => r.json())
-      .then(d => { videoTitle.textContent = d.title })
-      .catch(() => { /* silently ignore — caption just stays blank */ })
-  }
-
-  // ── Inbound postMessage handler ─────────────────────────────────────────────
-  // Handles action messages sent from the parent page to this component.
-
-  window.addEventListener('message', event => {
-    const data = parseMessage(event)
-    if (!data) return
-    if (data.channel === 'widget') return  // ignore Shoelace internal messages
-
-    const action = String(data.action || '').toLowerCase()
-
-    if (action === 'playat') {
-      // Open the expanded dialog and play from a specified time range.
-      // args[0] is a comma-separated "start" or "start,end" string.
-      // Example data-args values: "90"  "1:30"  "1:30,2:45"
-      if (!Array.isArray(data.args) || !data.args[0]) return
-      const parts = data.args[0].split(',').map(s => s.trim())
-      const start = toSeconds(parts[0])
-      const end   = parts[1] ? toSeconds(parts[1]) : null
-
-      const maxParams = new URLSearchParams(location.search)
-      maxParams.set('max',      'true')
-      maxParams.set('autoplay', 'true')
-      maxParams.set('start',    start !== null ? start : 0)
-      if (end !== null) maxParams.set('end', end)
-      else              maxParams.delete('end')
-
-      const maxSrc = `${location.pathname}?${maxParams.toString()}`
-      window.parent.postMessage({ type: 'showDialog', src: maxSrc, aspect: 1.7 }, '*')
-
-    } else if (action === 'play') {
-      // Play the max-mode player, optionally seeking to a start time first.
-      if (!ytPlayer) return
-      const start = data.args?.[0] ? toSeconds(data.args[0]) : null
-      if (start !== null) ytPlayer.seekTo(start, true)
-      ytPlayer.playVideo()
-
-    } else if (action === 'pause') {
-      // Pause the max-mode player.
-      ytPlayer?.pauseVideo()
-    }
-  })
-
-</script>
+  </script>
 </body>

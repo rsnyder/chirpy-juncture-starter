@@ -235,6 +235,17 @@ function addMessageHandler() {
             return;
         }
 
+        if (msg.type === "image-compare:height") {
+            const h = msg.height;
+            if (typeof h !== "number" || h <= 0) return;
+            const sendingIframe = findIframeBySourceWindow(event.source);
+            if (sendingIframe) {
+                console.log(`Setting height of iframe ${sendingIframe.id || sendingIframe.getAttribute('data-id') || ''} to ${h}px based on message from ${event.origin}`);
+                sendingIframe.style.height = h + "px";
+            }
+            return;
+        }
+
     });
 }
 

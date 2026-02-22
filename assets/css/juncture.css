@@ -718,3 +718,7 @@ figure.iframe-wrapper figcaption {
 .view-grid .post-index-item .post-index-media {
     aspect-ratio: 4 / 3;
 }
+
+iframe {
+    transition: height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
