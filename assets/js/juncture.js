@@ -104,13 +104,12 @@ function computeDialogWidth({ aspect }) {
     return clamp(Math.round(w), 320, Math.round(window.innerWidth * 0.98));
 }
 
-function showDialog(props = {}) {
-    // console.log('showDialog');
+function showDialog({ aspect, src } = {}) {
+    console.log('showDialog', { aspect, src });
     if (activeDialog) return;
-    const aspect = parseAspect(props.aspect, 1);
-    const srcUrl = safeURL(props.src);
+    const srcUrl = safeURL(src);
     if (!srcUrl) {
-        console.warn("showDialog: invalid src", props.src);
+        console.warn("showDialog: invalid src", src);
         return;
     }
 
@@ -148,6 +147,7 @@ function showDialog(props = {}) {
     iframe.loading = "lazy";
     iframe.allow = "clipboard-write";
     iframe.setAttribute("allowfullscreen", "");
+    iframe.setAttribute("allow", "autoplay; encrypted-media");
     iframe.src = srcUrl.toString();
 
     wrapper.appendChild(iframe);
@@ -204,7 +204,7 @@ function addMessageHandler() {
         }
 
         if (msg.type === "showDialog") {
-            showDialog(msg.props);
+            showDialog(msg);
             return;
         }
 

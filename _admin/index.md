@@ -18,7 +18,7 @@ If you are creating or editing content for this site, this is where you should s
 
 Chirpy provides the foundation: how to create posts, manage front matter, insert images, embed media, configure previews, and control layout. If you are new to the theme, begin with:
 
-* **[Getting Started](./getting-started)** 
+* **[Getting Started](getting-started)** 
 * **[Writing a New Post](write-a-new-post)** 
 * **[Text and Typography](text-and-typography)** 
 * **[Customize the Favicon](customize-the-favicon)** 
@@ -27,7 +27,7 @@ These documents explain the core conventions that everything else builds on.
 
 The Juncture documentation then shows you how to go beyond standard posts — adding interactive image viewers, maps, comparisons, and other embedded components using simple Markdown and Liquid include tags.
 
-* **[Juncture Overview](admin/juncture-overview)** 
+* **[Juncture Overview](juncture-overview)** 
 * **[Image Viewer](juncture-image-viewer)** 
 * **[Map Viewer](juncture-map-viewer)** 
 * **[Image Compare Viewer](juncture-image-compare-viewer)** 

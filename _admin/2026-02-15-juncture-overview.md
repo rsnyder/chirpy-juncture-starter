@@ -139,4 +139,84 @@ In short, Juncture turns a standard Jekyll + Chirpy site into a platform for int
 
 ---
 
-In the following sections, you’ll find detailed documentation for each Juncture component and examples of how to use them in your own posts.
+## Attribute Blocks and Entity Information
+
+### Kramdown Attribute Blocks
+
+Jekyll (and therefore Chirpy) uses **kramdown** as its Markdown processor. One of kramdown’s most useful features is the *attribute block*. An attribute block lets you attach additional properties — such as classes or IDs — to a Markdown element without writing raw HTML.
+
+A simple example looks like this:
+
+```markdown
+This is a paragraph.
+{: .highlight }
+```
+
+The second line attaches the CSS class `highlight` to the paragraph above it.
+
+In standard Jekyll/Chirpy usage, attribute blocks are commonly used to:
+
+* Apply layout or formatting classes
+* Add custom styling
+* Control alignment or width
+* Add IDs for linking
+
+Juncture builds on this existing capability rather than introducing something entirely new. In Juncture-enabled posts, attribute blocks are also used to:
+
+* Assign IDs to viewer components
+* Attach action behaviors to links
+* Provide custom labels or parameters for interactive elements
+
+In other words, attribute blocks are a general Markdown feature — but Juncture uses them as a structured way to connect text and media behavior without exposing authors to JavaScript.
+
+---
+
+### Entity Information Popups (Wikidata)
+
+Another key Juncture feature is the ability to create **Entity Information Boxes** by linking text to a Wikidata entity ID.
+
+When an author links a term to a Wikidata identifier (for example, a person, place, or concept), Juncture can automatically generate a small information popup. This popup typically includes:
+
+* A short description
+* An image (when available)
+* Basic structured facts
+
+This allows authors to enrich their essays with contextual information without manually writing sidebars or summaries.
+
+---
+
+### What Is Wikidata?
+
+For many users, Wikidata will be unfamiliar.
+
+**Wikidata** is a free, collaboratively edited knowledge base maintained by the Wikimedia Foundation (the same organization behind Wikipedia). Instead of storing narrative articles, Wikidata stores *structured data* about entities:
+
+* People
+* Places
+* Organizations
+* Works of art
+* Scientific concepts
+* Historical events
+* And more
+
+Each entity in Wikidata has a unique identifier, such as:
+
+```
+Q42
+```
+
+These identifiers represent structured records containing names, descriptions, images, dates, relationships, and other properties.
+
+Because Wikidata is structured and machine-readable, it can be used programmatically. Juncture leverages this structure to dynamically generate entity information popups directly within your content.
+
+---
+
+### Why This Matters
+
+Together, attribute blocks and Wikidata-powered entity popups illustrate an important design principle of Juncture:
+
+* Authors write simple Markdown.
+* Structured enhancements are layered on top.
+* Interactive and contextual features are added without requiring custom HTML or scripting.
+
+The result is content that remains readable and maintainable, while still supporting rich interaction and contextual depth.
