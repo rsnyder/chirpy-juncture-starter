@@ -71,6 +71,8 @@ FILES_TO_SYNC = [
     "assets/img/pages-source-light.png",
     "assets/posts/juncture/image.png",
     "assets/posts/juncture/map.png",
+    "assets/posts/image-compare/Westgate_Towers_c1905.jpg",
+    "assets/posts/image-compare/Westgate_Towers_2021.jpg",
     "tools/sync_code.py",
 ]
 

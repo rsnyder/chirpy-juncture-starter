@@ -167,9 +167,9 @@ Positive offset values shift the image right (X) or down (Y). Negative values sh
 {% raw %}
 ```liquid
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg&bx=-8&by=-6&bs=1.31"
-    after="Westgate-Amelia_Barling.jpg&ax=-4&ay=-2&as=1.17"
-    caption="Westgate — c.1910 vs 2021"
+    before="Westgate_Towers_c1905.jpg&bx=-8&by=-6&bs=1.31"
+    after="Westgate_Towers_2021.jpg&ax=-4&ay=-2&as=1.17"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="50"
 %}
@@ -180,9 +180,9 @@ Positive offset values shift the image right (X) or down (Y). Negative values sh
 
 <div>
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg&bx=-8&by=-6&bs=1.31"
-    after="Westgate-Amelia_Barling.jpg&ax=-4&ay=-2&as=1.17"
-    caption="Westgate — c.1910 vs 2021"
+    before="Westgate_Towers_c1905.jpg&bx=-8&by=-6&bs=1.31"
+    after="Westgate_Towers_2021.jpg&ax=-4&ay=-2&as=1.17"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="50"
 %}
@@ -202,9 +202,9 @@ The divider starts at the centre. Click the viewer to open the expanded version.
 {% raw %}
 ```liquid
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg"
-    after="Westgate-Amelia_Barling.jpg"
-    caption="Westgate Towers — 1890 vs today"
+    before="Westgate_Towers_c1905.jpg"
+    after="Westgate_Towers_2021.jpg"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="35"
 %}
@@ -215,9 +215,9 @@ The divider starts at the centre. Click the viewer to open the expanded version.
 
 <div>
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg"
-    after="Westgate-Amelia_Barling.jpg"
-    caption="Westgate Towers — 1890 vs today"
+    before="Westgate_Towers_c1905.jpg"
+    after="Westgate_Towers_2021.jpg"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="35"
 %}
@@ -239,9 +239,9 @@ When images were photographed at different distances or angles, the alignment to
 {% raw %}
 ```liquid
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg&bx=-8&by=-6&bs=1.31"
-    after="Westgate-Amelia_Barling.jpg&ax=-4&ay=-2&as=1.17"
-    caption="Westgate — c.1910 vs 2021"
+    before="Westgate_Towers_c1905.jpg&bx=-8&by=-6&bs=1.31"
+    after="Westgate_Towers_2021.jpg&ax=-4&ay=-2&as=1.17"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="50"
 %}
@@ -252,9 +252,9 @@ When images were photographed at different distances or angles, the alignment to
 
 <div>
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg&bx=-8&by=-6&bs=1.31"
-    after="Westgate-Amelia_Barling.jpg&ax=-4&ay=-2&as=1.17"
-    caption="Westgate — c.1910 vs 2021"
+    before="Westgate_Towers_c1905.jpg&bx=-8&by=-6&bs=1.31"
+    after="Westgate_Towers_2021.jpg&ax=-4&ay=-2&as=1.17"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="50"
 %}
@@ -299,9 +299,9 @@ Once aligned, click **Copy tag** at the bottom right of the panel. The tag is co
 {% raw %}
 ```liquid
 {% include embed/image-compare.html
-    before="Canterbury_postcards20210511_01.jpg&bx=-8&by=-6&bs=1.31"
-    after="Westgate-Amelia_Barling.jpg&ax=-4&ay=-2&as=1.17"
-    caption="Westgate — c.1910 vs 2021"
+    before="Westgate_Towers_c1905.jpg&bx=-8&by=-6&bs=1.31"
+    after="Westgate_Towers_2021.jpg&ax=-4&ay=-2&as=1.17"
+    caption="Westgate Towers — c.1905 vs 2021"
     aspect="1.5"
     position="50"
 %}
