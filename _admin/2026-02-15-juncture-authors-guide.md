@@ -29,7 +29,7 @@ Behind the scenes:
 
 This usually takes 1–5 minutes which means there is a significant delay between making a change and seeing the result.  The **Preview tool** avoids that wait by rendering just your post directly from the repository. You can see changes in seconds instead of minutes.  To use the Preview Tool a one-time setup is needed.  This only takes a couple minutes.
 
-Using the **[Preview Setup Guide](preview-preview-setup)**, configure the Preview Tool for quickly previewing committed edits.
+Using the **[Preview Setup Guide](juncture-preview-setup)**, configure the Preview Tool for quickly previewing committed edits.
 
 You only do this once per browser.
 
