@@ -1,7 +1,7 @@
 ---
 title: "Juncture: One-Time Setup for Authors"
 description: A guide for configuring the Juncture Preview Tool.  The tool uses a bookmarklet and GitHub token, enabling one-click live preview of any post directly from GitHub's file browser.
-permalink: /admin/preview-setup
+permalink: /admin/juncture-preview-setup
 date: 2026-02-15
 toc: true
 order: 11
