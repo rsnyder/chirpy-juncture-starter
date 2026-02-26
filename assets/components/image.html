@@ -705,8 +705,8 @@
         }
         if (imageAspectRatio) {
           let captionHeight = caption.clientHeight || parseInt(caption?.style.height?.slice(0, -2)) || 24
-          let containerHeight = width / imageAspectRatio + captionHeight
-          if (iframe) iframe.style.height = `${containerHeight}px`
+          let containerHeight = width / imageAspectRatio + captionHeight + 20;
+          if (iframe) iframe.style.height = `${containerHeight}px`;
         }
       }
     }
@@ -1007,6 +1007,7 @@
       const imageSize = image.getContentSize();
       const imageAspectRatio = imageSize.x / imageSize.y;
       setContainerHeight(imageAspectRatio);
+      setTimeout(() => viewer.viewport.goHome(true), 0);
     }).observe(window.frameElement);
 
     window.addEventListener('message', (event) => {
