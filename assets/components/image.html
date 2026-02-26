@@ -302,14 +302,6 @@
       throw new Error("Missing src or manifest");
     }
 
-    new ResizeObserver(entries => {
-      const image = viewer?.world.getItemAt(0);
-      if (!image) return;
-      const imageSize = image.getContentSize();
-      const imageAspectRatio = imageSize.x / imageSize.y;
-      setContainerHeight(imageAspectRatio);
-    }).observe(window.frameElement);
-
     // =========================================================================
     // IIIF Manifest Support
     // =========================================================================
@@ -1008,6 +1000,14 @@
         }
       }, 60);
     }
+
+    new ResizeObserver(entries => {
+      const image = viewer?.world.getItemAt(0);
+      if (!image) return;
+      const imageSize = image.getContentSize();
+      const imageAspectRatio = imageSize.x / imageSize.y;
+      setContainerHeight(imageAspectRatio);
+    }).observe(window.frameElement);
 
     window.addEventListener('message', (event) => {
       const data = safeParseMessageData(event.data);
