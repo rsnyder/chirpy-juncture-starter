@@ -303,7 +303,7 @@
     }
 
     new ResizeObserver(entries => {
-      const image = viewer.world.getItemAt(0);
+      const image = viewer?.world.getItemAt(0);
       if (!image) return;
       const imageSize = image.getContentSize();
       const imageAspectRatio = imageSize.x / imageSize.y;
