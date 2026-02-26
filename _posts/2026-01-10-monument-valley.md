@@ -49,13 +49,13 @@ oxide. For tourists doing a national park tour, Monument Valley is situated betw
 Park](map/flyto/Q223969,12) and the [Grand Canyon](map/flyto/Q118841,12).
 
 {% include embed/map.html
-id="map"
-center="Q192017"
-zoom="5"
-caption="Monument Valley"
-markers="Q118841~National_Parks|
-Q777183~National_Parks|
-Q223969~National_Parks"
+    id="map"
+    center="Q192017"
+    zoom="5"
+    caption="Monument Valley"
+    markers="Q118841~National_Parks|
+    Q777183~National_Parks|
+    Q223969~National_Parks"
 %}
 
 The buttes arising from the valley floor are clearly stratified, with three principal layers. The lowest layer is the
