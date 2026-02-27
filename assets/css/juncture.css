@@ -724,6 +724,15 @@ iframe {
     transition: height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+iframe.full {
+    width: 100%;
+}
+
+iframe[src^="https://cdn.knightlab.com/"] {
+    height: 650px;
+    aspect-ratio: unset !important;
+}
+
 .post-tail-wrapper {
     clear: both;
 }

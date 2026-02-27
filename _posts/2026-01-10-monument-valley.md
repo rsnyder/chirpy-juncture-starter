@@ -36,8 +36,7 @@ Camel Butte, Cly Butte, King-on-his-Throne, Rooster Rock, and Setting Hen. Anoth
 Pole](Q7828304), a highly eroded butte remanent. The valley also includes large stone structures, such as the "Eye of
 the Sun". [People](image/zoomto/pct:48.49,66.82,11.31,7.44)
 
-{% include embed/image.html id="image" src="wc:Monument_Valley,_Utah,_USA.jpg" caption="Monument Valley, UT"
-cover="true" %}
+{% include embed/image.html id="image" src="wc:Monument_Valley,_Utah,_USA.jpg" caption="Monument Valley, UT" aspect="1.272" %}
 
 # Geography and geology
 
