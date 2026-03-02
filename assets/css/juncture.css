@@ -663,11 +663,37 @@ iframe[src^="https://cdn.knightlab.com/"] {
         width: 1066px !important;
     }
 
-    sl-tab-group.right,
     iframe.right {
         width: 50% !important;
-        aspect-ratio: 1 !important;
-        border: 1px solid #ddd;
         page-break-inside: avoid !important;
+    }
+}
+
+/* Default: posters hidden on screen */
+    .yt-print-poster {
+        display: none;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+    }
+
+    /* Print: hide the iframe and show the poster */
+    @media print {
+    iframe[src*="youtube.com/embed/"],
+    iframe[src*="youtube-nocookie.com/embed/"] {
+        display: none !important;
+    }
+
+    .yt-print-poster {
+        display: block !important;
+    }
+
+    /* If your component adds overlays/logos/buttons, nuke them in print */
+    .embed-youtube .play-button,
+    .embed-youtube .yt-logo,
+    .embed-youtube .overlay,
+    .embed-youtube .youtube-overlay {
+        display: none !important;
     }
 }

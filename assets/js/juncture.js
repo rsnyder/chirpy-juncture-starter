@@ -254,110 +254,130 @@ addMessageHandler();
  * ------------------------------------------- */
 
 function wrapAdjacentEmbedsAsTabs({
-    root = document.body,
-    minRunLength = 2,
-    wrapperClass = "embed-tabs",
-    iconFor = (node) => {
-        if (node.classList.contains('embed-image')) return "fa-regular fa-image";
-        if (node.classList.contains('embed-map')) return "fa-solid fa-map-pin";
-        if (node.classList.contains('embed-image-compare')) return "fa-regular fa-images";
-        if (node.classList.contains('embed-youtube')) return "fa-brands fa-youtube";
-        if (node.classList.contains('iframe-wrapper')) return "fa-regular fa-file-lines";
-        return "fa-solid fa-square";
-    },
-    labelFor = (node, idx) => {
-        if (node.tagName === "IFRAME") return `Map ${idx + 1}`;
-        if (node.tagName === "P" && node.querySelector("img")) return `Image ${idx + 1}`;
-        return `Item ${idx + 1}`;
-    }
+  root = document.body,
+  minRunLength = 2,
+  wrapperClass = "embed-tabs",
+  iconFor = (node) => {
+    if (node.classList.contains('embed-image')) return "fa-regular fa-image";
+    if (node.classList.contains('embed-map')) return "fa-solid fa-map-pin";
+    if (node.classList.contains('embed-image-compare')) return "fa-regular fa-images";
+    if (node.classList.contains('embed-youtube')) return "fa-brands fa-youtube";
+    if (node.classList.contains('iframe-wrapper')) return "fa-regular fa-file-lines";
+    return "fa-solid fa-square";
+  },
+  labelFor = (node, idx) => {
+    if (node.tagName === "IFRAME") return `Map ${idx + 1}`;
+    if (node.tagName === "P" && node.querySelector("img")) return `Image ${idx + 1}`;
+    return `Item ${idx + 1}`;
+  }
 } = {}) {
-    const isIgnorableText = (n) => (n.nodeType === Node.COMMENT_NODE) || (n.nodeType === Node.TEXT_NODE && n.nodeValue.trim() === "");
 
-    const isEmbedItem = (n) =>
-        n instanceof Element &&
-        (n.tagName === "IFRAME" || n.tagName === "FIGURE" || (n.tagName === "P" && n.querySelector("img")));
+  const printing = !!(window.matchMedia && window.matchMedia("print").matches);
 
+  const isIgnorableText = (n) =>
+    (n.nodeType === Node.COMMENT_NODE) ||
+    (n.nodeType === Node.TEXT_NODE && n.nodeValue.trim() === "");
 
-    const nextNonIgnorableSibling = (node) => {
-        let n = node.nextSibling;
-        while (n && isIgnorableText(n)) n = n.nextSibling;
-        return n;
-    };
+  const isEmbedItem = (n) =>
+    n instanceof Element &&
+    (n.tagName === "IFRAME" || n.tagName === "FIGURE" || (n.tagName === "P" && n.querySelector("img")));
 
-    let panelCounter = 0;
+  const nextNonIgnorableSibling = (node) => {
+    let n = node.nextSibling;
+    while (n && isIgnorableText(n)) n = n.nextSibling;
+    return n;
+  };
 
-    // Iterating every element (*) is heavy, but safer than assuming structure.
-    // If performance becomes an issue, scope root to article content only.
-    for (const parent of root.querySelectorAll("*")) {
-        if (!parent.childNodes?.length) continue;
-
-        let nodes = Array.from(parent.childNodes);
-        let i = 0;
-
-        while (i < nodes.length) {
-            const start = nodes[i];
-
-            if (!isEmbedItem(start)) {
-                i++;
-                continue;
-            }
-
-            const run = [start];
-            let cursor = start;
-
-            while (true) {
-                const next = nextNonIgnorableSibling(cursor);
-                if (next && isEmbedItem(next)) {
-                    run.push(next);
-                    cursor = next;
-                    continue;
-                }
-                break;
-            }
-
-            if (run.length >= minRunLength) {
-                if (run[0].closest(`sl-tab-group.${wrapperClass}`)) {
-                    i++;
-                    continue;
-                }
-
-                const tabGroup = document.createElement("sl-tab-group");
-                // tabGroup.classList.add(wrapperClass, "right");
-
-                parent.insertBefore(tabGroup, run[0]);
-
-                run.forEach((node, idx) => {
-                    const panelName = `embed-panel-${++panelCounter}`;
-                    const label = labelFor(node, idx);
-
-                    const tab = document.createElement("sl-tab");
-                    tab.slot = "nav";
-                    tab.panel = panelName;
-                    tab.setAttribute("aria-label", label);
-                    tab.title = label;
-
-                    const icon = document.createElement("i");
-                    icon.className = iconFor(node);
-                    icon.setAttribute("aria-hidden", "true");
-                    tab.appendChild(icon);
-
-                    const panel = document.createElement("sl-tab-panel");
-                    panel.name = panelName;
-                    panel.appendChild(node);
-
-                    tabGroup.appendChild(tab);
-                    tabGroup.appendChild(panel);
-                });
-
-                // Refresh snapshot after mutation
-                nodes = Array.from(parent.childNodes);
-                i = nodes.indexOf(tabGroup) + 1;
-                continue;
-            }
-
-            i++;
-        }
+  // In print mode, hide everything in the run except the first item.
+  const hideRunExceptFirst = (run) => {
+    for (let k = 1; k < run.length; k++) {
+      run[k].style.display = "none";
     }
+  };
+
+  let panelCounter = 0;
+
+  for (const parent of root.querySelectorAll("*")) {
+    if (!parent.childNodes?.length) continue;
+
+    let nodes = Array.from(parent.childNodes);
+    let i = 0;
+
+    while (i < nodes.length) {
+      const start = nodes[i];
+
+      if (!isEmbedItem(start)) {
+        i++;
+        continue;
+      }
+
+      const run = [start];
+      let cursor = start;
+
+      while (true) {
+        const next = nextNonIgnorableSibling(cursor);
+        if (next && isEmbedItem(next)) {
+          run.push(next);
+          cursor = next;
+          continue;
+        }
+        break;
+      }
+
+      if (run.length >= minRunLength) {
+
+        // --- PRINT BEHAVIOR ---
+        if (printing) {
+          hideRunExceptFirst(run);
+
+          // Refresh snapshot after mutation
+          nodes = Array.from(parent.childNodes);
+          i = nodes.indexOf(run[0]) + 1;
+          continue;
+        }
+
+        // --- NORMAL (TABS) BEHAVIOR ---
+        if (run[0].closest(`sl-tab-group.${wrapperClass}`)) {
+          i++;
+          continue;
+        }
+
+        const tabGroup = document.createElement("sl-tab-group");
+        // tabGroup.classList.add(wrapperClass, "right");
+
+        parent.insertBefore(tabGroup, run[0]);
+
+        run.forEach((node, idx) => {
+          const panelName = `embed-panel-${++panelCounter}`;
+          const label = labelFor(node, idx);
+
+          const tab = document.createElement("sl-tab");
+          tab.slot = "nav";
+          tab.panel = panelName;
+          tab.setAttribute("aria-label", label);
+          tab.title = label;
+
+          const icon = document.createElement("i");
+          icon.className = iconFor(node);
+          icon.setAttribute("aria-hidden", "true");
+          tab.appendChild(icon);
+
+          const panel = document.createElement("sl-tab-panel");
+          panel.name = panelName;
+          panel.appendChild(node);
+
+          tabGroup.appendChild(tab);
+          tabGroup.appendChild(panel);
+        });
+
+        nodes = Array.from(parent.childNodes);
+        i = nodes.indexOf(tabGroup) + 1;
+        continue;
+      }
+
+      i++;
+    }
+  }
 }
 
 
