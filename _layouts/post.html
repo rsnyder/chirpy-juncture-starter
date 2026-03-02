@@ -381,7 +381,7 @@ script_includes:
       new MutationObserver(() => {
         mode = mainWrapper.classList.contains('col2') ? 'col2' : 'flat';
         console.log(`mode=${mode}`);
-      }).observe(mainWrapper, {attributes: true, attributeFilter: ['class']})
+      }).observe(mainWrapper, {attributes: true, attributeFilter: ['class']});
 
       if (wikidataInfoPopups) makeEntityPopups();
       if (groupEmbeds) wrapAdjacentEmbedsAsTabs();
