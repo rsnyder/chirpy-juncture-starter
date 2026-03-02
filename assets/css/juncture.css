@@ -217,6 +217,10 @@ figure.iframe-wrapper figcaption {
     width: 100%;
 }
 
+.col1 .viewer {
+    display: none;;
+}
+
 .preview .container,
 #main-wrapper.col2>.container {
     max-width: 1200px !important;

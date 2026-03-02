@@ -830,7 +830,7 @@ const SELECTORS = {
     article: "article",
     header: "article > header",
     viewer: ".viewer",
-    step: ".col2 .post-content > p:not(:has(>img)), .col2 .post-content > blockquote",
+    step: ".col2 .post-content > p:not(:has(>img)), .col2 .post-content > blockquote, .col2 .float-pair > p",
 };
 
 const scroller = scrollama();
@@ -873,21 +873,32 @@ function findViewerSource(stepEl) {
 
     node = stepEl?.nextElementSibling;
     while (node?.nodeName === 'HR') node = node.nextElementSibling;
-    if (node?.nodeType === Node.ELEMENT_NODE && (toMatch.includes(node?.nodeName) || (node?.nodeName === 'P' && node.firstChild?.nodeName === 'IMG') || (node?.nodeName === 'P' && node.firstChild?.nodeName === 'A' && node.firstChild.firstChild?.nodeName === 'IMG'))) {
-        return node
+    if (node?.nodeType === Node.ELEMENT_NODE && (
+        toMatch.includes(node?.nodeName) || 
+        (node?.nodeName === 'P' && node.firstChild?.nodeName === 'IMG') || 
+        (node?.nodeName === 'P' && node.firstChild?.nodeName === 'A' && node.firstChild.firstChild?.nodeName === 'IMG') ||
+        node?.classList.contains('float-pair')
+    )) {
+        return node.classList.contains('float-pair') ? node.querySelector('iframe, img') || node : node;
     }
 
     node = stepEl?.previousElementSibling || null;
     while (node?.nodeName === 'HR') node = node.previousElementSibling;
     while (node) {
-        if (node.nodeType === Node.ELEMENT_NODE && (toMatch.includes(node?.nodeName) || (node?.nodeName === 'P' && node.firstChild?.nodeName === 'IMG') || (node?.nodeName === 'P' && node.firstChild?.nodeName === 'A' && node.firstChild.firstChild?.nodeName === 'IMG'))) {
-            return node;
+        if (node.nodeType === Node.ELEMENT_NODE && (
+            toMatch.includes(node?.nodeName) || 
+            (node?.nodeName === 'P' && node.firstChild?.nodeName === 'IMG') || 
+            (node?.nodeName === 'P' && node.firstChild?.nodeName === 'A' && node.firstChild.firstChild?.nodeName === 'IMG') ||
+            node?.classList.contains('float-pair')
+        )) {
+            return node.classList.contains('float-pair') ? node.querySelector('iframe, img') || node : node;
         }
+
         node = node.previousElementSibling;
     }
 }
 
-/**
+/**`
  * Clone the source node into the viewer.
  * - Removes `.shimmer` class if present (avoids placeholder styles in clone).
  */
@@ -969,6 +980,7 @@ function handleStepEnter(response) {
 }
 
 function init2col() {
+    console.log("Initializing 2-column scrollytelling");
     els.article = qs(SELECTORS.article);
     els.header = qs(SELECTORS.header);
     els.viewer = qs(SELECTORS.viewer);

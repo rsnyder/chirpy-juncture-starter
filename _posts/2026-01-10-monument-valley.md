@@ -28,6 +28,8 @@ sandstone buttes, with the largest reaching 1,000 ft (300 m) above the valley fl
 formations are located in northeastern Arizona along the Utah–Arizona state line. The valley is considered sacred by the
 [Navajo Nation](Q1783171), the Native American people within whose reservation it lies.[^2]
 
+{% include embed/image.html id="image" src="wc:Monument_Valley,_Utah,_USA.jpg" caption="Monument Valley, UT" aspect="1.272" %}
+
 Major rock formations include [West](image/zoomto/pct:10.94,27.88,21.05,30){: label="West Mitten Butte"} and [East
 Mitten](image/zoomto/pct:40.59,35.80,21.91,25){: label="East Mitten Butte"} Buttes, [Merrick
 Butte](image/zoomto/pct:67.68,34.23,23.22,27), Hunts Mesa, Eagle Mesa, Sentinel Mesa, Brighams Tomb, Castle Rock,
@@ -35,8 +37,6 @@ Stagecoach, Big Indian, Rain God Mesa, Spearhead Mesa, Mitchell Mesa, Mitchell B
 Camel Butte, Cly Butte, King-on-his-Throne, Rooster Rock, and Setting Hen. Another notable formation is [Totem
 Pole](Q7828304), a highly eroded butte remanent. The valley also includes large stone structures, such as the "Eye of
 the Sun". [People](image/zoomto/pct:48.49,66.82,11.31,7.44)
-
-{% include embed/image.html id="image" src="wc:Monument_Valley,_Utah,_USA.jpg" caption="Monument Valley, UT" aspect="1.272" %}
 
 # Geography and geology
 
