@@ -1010,9 +1010,9 @@
     new ResizeObserver(entries => {
       const image = viewer?.world.getItemAt(0);
       if (!image) return;
-      //const imageSize = image.getContentSize();
-      //const imageAspectRatio = imageSize.x / imageSize.y;
-      //setContainerHeight(imageAspectRatio);
+      const imageSize = image.getContentSize();
+      const imageAspectRatio = imageSize.x / imageSize.y;
+      setContainerHeight(imageAspectRatio);
       viewer.viewport.goHome(false);
       setTimeout(() => viewer.viewport.goHome(false), 50);
     }).observe(window.frameElement);
